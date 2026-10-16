@@ -1326,13 +1326,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Until removed manually"
+            "value": "No time limit"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "До ручного видалення"
+            "value": "Без обмеження часу"
           }
         }
       }
@@ -1342,13 +1342,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "7 days · pinned items are kept"
+            "value": "7 days"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "7 днів · закріплене залишається"
+            "value": "7 днів"
           }
         }
       }
@@ -1358,13 +1358,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "30 days · pinned items are kept"
+            "value": "30 days"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "30 днів · закріплене залишається"
+            "value": "30 днів"
           }
         }
       }
@@ -1374,13 +1374,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "90 days · pinned items are kept"
+            "value": "90 days"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "90 днів · закріплене залишається"
+            "value": "90 днів"
           }
         }
       }
@@ -1669,6 +1669,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Переглянути оновлення"
+          }
+        }
+      }
+    },
+    "quick.historySettings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clipboard settings"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Налаштування буфера обміну"
+          }
+        }
+      }
+    },
+    "library.retention.itemLimit %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item limit: %@"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ліміт записів: %@"
+          }
+        }
+      }
+    },
+    "library.retention.unlimitedItems": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No item limit"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Без обмеження кількості"
           }
         }
       }

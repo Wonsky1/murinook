@@ -16,25 +16,11 @@ struct MurinookApp: App {
     private var locale: Locale {
         delegate.controller?.services.preferences.value.languageCode.map(Locale.init(identifier:)) ?? .current
     }
-    private var updateAvailable: Bool {
-        if case .available = delegate.controller?.updates.store.state { return true }
-        return false
-    }
     var body: some Scene {
         MenuBarExtra {
-            if let controller = delegate.controller {
-                MenuBarContent(controller: controller)
-            } else if let error = delegate.startupError {
-                Text("Could not open Murinook storage")
-                Text(error)
-                Button("Quit Murinook") { NSApp.terminate(nil) }
-            } else { Text("Opening Murinook…") }
+            MenuBarRootView(delegate: delegate)
         } label: {
-            Image(nsImage: MenuBarSymbol.image)
-                .overlay(alignment: .topTrailing) {
-                    if updateAvailable { Circle().fill(.primary).frame(width: 4, height: 4) }
-                }
-                .accessibilityLabel(updateAvailable ? AppStrings.text("Murinook — update available", locale: locale) : "Murinook")
+            MenuBarLabel(delegate: delegate)
         }
         .menuBarExtraStyle(.window)
         .commands {

@@ -67,6 +67,47 @@ final class HistoryStoreTests: XCTestCase {
         XCTAssertEqual(store.clips, [old])
     }
 
+    func testUnlimitedAgeAndCountKeepMoreThanDefaultCapacity() async throws {
+        let history = MemoryHistoryRepository()
+        let preferences = PreferencesStore(repository: MemoryPreferencesRepository(value: .init(retentionDays: 0, maxHistoryItems: 0)))
+        let store = HistoryStore(history: history, collections: MemoryCollectionRepository(), contents: MemoryContentRepository(), preferences: preferences)
+        let oldDate = Date(timeIntervalSince1970: 1_000_000)
+        let clips = (0..<5_001).map { index in
+            Clip(contentID: UUID(), kind: .text, source: .init(name: "A"), createdAt: oldDate, lastCopiedAt: oldDate.addingTimeInterval(Double(index)))
+        }
+        try await history.save(clips)
+        await store.load()
+
+        await store.enforceRetention(now: Date(timeIntervalSince1970: 2_000_000))
+
+        XCTAssertEqual(store.clips.count, 5_001)
+    }
+
+    func testUnlimitedCountStillAppliesFiniteAgeAndFiniteCountStillAppliesWithoutAgeLimit() async throws {
+        let now = Date(timeIntervalSince1970: 2_000_000)
+        let oldDate = Date(timeIntervalSince1970: 1_000_000)
+        let recentDate = now.addingTimeInterval(-60)
+        let secondRecentDate = now.addingTimeInterval(-120)
+        let expired = Clip(contentID: UUID(), kind: .text, source: .init(name: "A"), createdAt: oldDate, lastCopiedAt: oldDate)
+        let recent = Clip(contentID: UUID(), kind: .text, source: .init(name: "A"), createdAt: recentDate, lastCopiedAt: recentDate)
+        let secondRecent = Clip(contentID: UUID(), kind: .text, source: .init(name: "A"), createdAt: secondRecentDate, lastCopiedAt: secondRecentDate)
+        let pinnedExpired = Clip(contentID: UUID(), kind: .text, source: .init(name: "A"), createdAt: oldDate, lastCopiedAt: oldDate, isPinned: true)
+
+        let ageLimitedHistory = MemoryHistoryRepository()
+        let ageLimitedStore = HistoryStore(history: ageLimitedHistory, collections: MemoryCollectionRepository(), contents: MemoryContentRepository(), preferences: PreferencesStore(repository: MemoryPreferencesRepository(value: .init(retentionDays: 1, maxHistoryItems: 0))))
+        try await ageLimitedHistory.save([expired, recent, secondRecent, pinnedExpired])
+        await ageLimitedStore.load()
+        await ageLimitedStore.enforceRetention(now: now)
+        XCTAssertEqual(Set(ageLimitedStore.clips.map(\.id)), Set([recent.id, secondRecent.id, pinnedExpired.id]))
+
+        let countLimitedHistory = MemoryHistoryRepository()
+        let countLimitedStore = HistoryStore(history: countLimitedHistory, collections: MemoryCollectionRepository(), contents: MemoryContentRepository(), preferences: PreferencesStore(repository: MemoryPreferencesRepository(value: .init(retentionDays: 0, maxHistoryItems: 1))))
+        try await countLimitedHistory.save([recent, secondRecent, expired, pinnedExpired])
+        await countLimitedStore.load()
+        await countLimitedStore.enforceRetention(now: now)
+        XCTAssertEqual(Set(countLimitedStore.clips.map(\.id)), Set([recent.id, pinnedExpired.id]))
+    }
+
     func testFailedRemovalDoesNotPublishUncommittedState() async {
         let history = MemoryHistoryRepository()
         let item = Clip(contentID: UUID(), kind: .text, source: .init(name: "A"))

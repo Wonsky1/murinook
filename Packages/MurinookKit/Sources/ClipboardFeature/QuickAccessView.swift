@@ -15,6 +15,8 @@ public struct QuickAccessView: View {
     @State private var dateFilter = "anytime"
     @State private var collectionFilter: UUID?
     @State private var pinnedOnly = false
+    @State private var isBrandHovered = false
+    @State private var isSettingsHovered = false
 
     public init(store: HistoryStore, actions: QuickAccessActions, preferences: PreferencesStore? = nil) { self.store = store; self.actions = actions; self.preferences = preferences }
     private var layout: HistoryLayout { preferences?.value.historyLayout ?? .list }
@@ -65,13 +67,37 @@ public struct QuickAccessView: View {
     }
 
     private var header: some View {
-        HStack(spacing: 12) {
-            MurinookBrandMark(size: 22)
-            Text("Murinook").font(.system(size: 13, weight: .semibold)).foregroundStyle(MurinookPalette.text)
+        HStack(spacing: 10) {
+            Button { actions.close(); actions.openLibrary() } label: {
+                HStack(spacing: 6) {
+                    MurinookBrandMark(size: 22)
+                    Text("Murinook").font(.system(size: 13, weight: .semibold)).foregroundStyle(MurinookPalette.text)
+                }
+                .padding(.horizontal, 5).padding(.vertical, 4)
+                .background(isBrandHovered ? MurinookPalette.surface2 : .clear, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .onHover { isBrandHovered = $0 }
+            .help(packageText("quick.library"))
+            .accessibilityLabel(packageText("quick.library"))
+
             MurinookSearchField(text: $search, prompt: packageText("quick.search"), shortcut: Text("⌘ K"), focusOnAppear: true, focusShortcut: "k", moveSelection: moveSelection, submit: { plain in performPaste(plain: plain) }, cancel: actions.close)
             HistoryLayoutPicker(selection: Binding(get: { layout }, set: { value in preferences?.update { $0.historyLayout = value } }))
             captureButton
-            Button(action: actions.close) { Image(systemName: "xmark").font(.system(size: 11, weight: .semibold)).frame(width: 26, height: 26) }.buttonStyle(.plain).foregroundStyle(MurinookPalette.muted).accessibilityLabel(packageText("common.close"))
+            Button { actions.close(); actions.openHistorySettings() } label: {
+                Image(systemName: "gearshape").font(.system(size: 12, weight: .medium)).frame(width: 26, height: 26)
+                    .background(isSettingsHovered ? MurinookPalette.surface2 : .clear, in: Circle())
+            }
+            .buttonStyle(.plain).foregroundStyle(MurinookPalette.muted)
+            .onHover { isSettingsHovered = $0 }
+            .help(packageText("quick.historySettings"))
+            .accessibilityLabel(packageText("quick.historySettings"))
+            Button(action: actions.close) {
+                Image(systemName: "xmark").font(.system(size: 11, weight: .semibold)).frame(width: 26, height: 26)
+            }
+            .buttonStyle(.plain).foregroundStyle(MurinookPalette.muted)
+            .help(packageText("common.close"))
+            .accessibilityLabel(packageText("common.close"))
         }.padding(.horizontal, 16).frame(height: 55).background(MurinookPalette.surface).overlay(alignment: .bottom) { Rectangle().fill(MurinookPalette.border).frame(height: 1) }
     }
     private var captureButton: some View {
@@ -121,7 +147,7 @@ public struct QuickAccessView: View {
         }.padding(.horizontal, 14).frame(height: 45).background(MurinookPalette.surface).overlay(alignment: .top) { Rectangle().fill(MurinookPalette.border).frame(height: 1) }
     }
     private var footer: some View {
-        HStack(spacing: 6) { Text("↑ ↓").murinookKeyCap(); Text("quick.select", bundle: .module); Text("↵").murinookKeyCap(); Text("quick.paste", bundle: .module); Text("⇧ ↵").murinookKeyCap(); Text("quick.pastePlain", bundle: .module); Spacer(); Button { actions.close(); actions.openLibrary() } label: { Text("quick.library", bundle: .module) }.buttonStyle(MurinookButtonStyle(variant: .quiet)) }
+        HStack(spacing: 6) { Text("↑ ↓").murinookKeyCap(); Text("quick.select", bundle: .module); Text("↵").murinookKeyCap(); Text("quick.paste", bundle: .module); Text("⇧ ↵").murinookKeyCap(); Text("quick.pastePlain", bundle: .module); Spacer() }
             .font(.system(size: 11)).foregroundStyle(MurinookPalette.soft).padding(.horizontal, 14).frame(height: 36)
     }
     private var numberedShortcuts: some View {

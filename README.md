@@ -6,7 +6,7 @@ A native macOS clipboard manager and temporary drag-and-drop shelf. Keep recent 
 
 ## Download
 
-[Download Murinook 0.1.0-beta.4 (universal DMG)](https://github.com/Wonsky1/murinook/releases/download/v0.1.0-beta.4/Murinook-0.1.0-beta.4-universal.dmg) · [Release notes](https://github.com/Wonsky1/murinook/releases/tag/v0.1.0-beta.4)
+[Download Murinook 0.1.0-beta.5 (universal DMG)](https://github.com/Wonsky1/murinook/releases/download/v0.1.0-beta.5/Murinook-0.1.0-beta.5-universal.dmg) · [Release notes](https://github.com/Wonsky1/murinook/releases/tag/v0.1.0-beta.5)
 
 1. Open the DMG and drag **Murinook** into **Applications**.
 2. Launch Murinook from Applications. The Library opens, with a short introduction on your first launch. Its icon also appears in the menu bar; showing it in the Dock is optional.
@@ -17,7 +17,7 @@ This beta is ad-hoc signed and **not notarized**. If macOS blocks it, first try 
 ## What it does
 
 - **Clipboard history:** capture and search recent clips, organize them into collections, pin items, add notes and tags, preview content, and export selections.
-- **Quick Access:** find and paste a recent clip from a compact keyboard-driven panel.
+- **Quick Access:** find and paste a recent clip from a compact keyboard-driven panel. Open clipboard settings from its header gear, or click the Murinook mark to open Library.
 - **Three history layouts:** switch between tiles, a chronological list, and a horizontal strip.
 - **Temporary shelf:** drag supported content to reveal the shelf. Dropped items remain available while you work; move the shelf along a screen edge, hide it to a small restore button, and drag items out when ready.
 - **Paste queue:** line up clips and paste them one at a time.
@@ -49,12 +49,12 @@ When a newer stable version is available, the Library shows an update banner, th
 
 Development builds and this ad-hoc signed beta use different signing identities. macOS may ask you to authorize access to existing app data or grant Accessibility access again. Keep a backup when moving between development and release builds.
 
-Automatic checks can be disabled in Settings. The currently published `0.1.0-beta.4` is a prerelease, so it is available through the download link above rather than the stable update feed.
+Automatic checks can be disabled in Settings. The currently published `0.1.0-beta.5` is a prerelease, so it is available through the download link above rather than the stable update feed.
 
 ## Privacy and your data
 
 - History, collections, shelf items, and preferences are stored locally in your user Library, separately from the app. Replacing the app during an update does not delete this storage. The paste queue is kept only for the current session.
-- History retention and item limits are configurable. Pinned clips are exempt from automatic history cleanup.
+- History retention and item limits are configurable and can be disabled independently. Unlimited history can use more disk space, slow loading/search, and keep sensitive clips for longer; Settings explains these tradeoffs before enabling it. Pinned clips are exempt from automatic history cleanup.
 - Files and folders added to the shelf are normally **references to their originals**, not duplicate copies. Keep the originals available. Temporary exports and promised files supplied by other apps may need a local copy.
 - Dragging a shelf file out copies it to the destination. Accepted transfers remove it from the shelf when automatic removal is enabled; removing it from the shelf never deletes its original.
 - Capture can be paused and apps can be excluded. Clipboard representations marked private, concealed, or transient are skipped, but these conventions depend on the source app. Clipboard history may contain sensitive information.

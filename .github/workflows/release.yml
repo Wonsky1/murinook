@@ -64,8 +64,19 @@ jobs:
           sums='work/releases/SHA256SUMS'
           test -f "$dmg"
           test -f "$sums"
-          notes='Murinook for macOS 15 and later, for Apple silicon and Intel. Download the disk image and drag Murinook to Applications. This build is ad-hoc signed and is not notarized; macOS may require Open Anyway in Privacy & Security.'
-          release_args=(--verify-tag --title "$version" --notes "$notes")
+          notes_file="$RUNNER_TEMP/murinook-release-notes.md"
+          git for-each-ref --format='%(contents:body)' "refs/tags/$RELEASE_TAG" > "$notes_file"
+          cat >> "$notes_file" <<'NOTES'
+
+          ## Installation
+
+          macOS 15 or later · Apple silicon and Intel.
+
+          Open the DMG, quit Murinook, and drag it to Applications, replacing the previous copy. Your existing history and preferences remain in their separate storage.
+
+          This beta is ad-hoc signed and not notarized. macOS may require **Open Anyway** in **System Settings → Privacy & Security**.
+          NOTES
+          release_args=(--verify-tag --title "$version" --notes-file "$notes_file")
           if [[ "$version" == *-* ]]; then
             release_args+=(--prerelease --latest=false)
           else

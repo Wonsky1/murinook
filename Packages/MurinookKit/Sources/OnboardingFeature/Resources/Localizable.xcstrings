@@ -721,18 +721,34 @@
         }
       }
     },
-    "backgroundRunning.message": {
+    "backgroundRunning.close": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Closing the Library keeps Murinook available from the menu bar."
+            "value": "Close"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Після закриття Бібліотеки Murinook залишається доступним у рядку меню."
+            "value": "Закрити"
+          }
+        }
+      }
+    },
+    "backgroundRunning.message": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Click the menu bar icon above to open Murinook again."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Натисніть значок угорі, щоб знову відкрити Murinook."
           }
         }
       }
@@ -742,13 +758,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "To quit, click the Murinook icon in the menu bar → Quit Murinook."
+            "value": "To quit: Murinook icon → Quit Murinook."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Щоб вийти, натисніть значок Murinook у верхньому рядку меню → «Вийти з Murinook»."
+            "value": "Щоб вийти: значок Murinook → «Вийти з Murinook»."
           }
         }
       }

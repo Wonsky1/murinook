@@ -8,15 +8,16 @@ public struct QuickAccessActions {
     public var addToShelf: (Clip) -> Void
     public var addToQueue: (Clip) -> Void
     public var openLibrary: () -> Void
+    public var openHistorySettings: () -> Void
     public var close: () -> Void
 
     public init(paste: @escaping (Clip) -> Void = { _ in }, copy: @escaping (Clip) -> Void = { _ in },
                 pastePlain: @escaping (Clip) -> Void = { _ in }, addToShelf: @escaping (Clip) -> Void = { _ in },
                 addToQueue: @escaping (Clip) -> Void = { _ in }, openLibrary: @escaping () -> Void = {},
-                close: @escaping () -> Void = {}) {
+                openHistorySettings: @escaping () -> Void = {}, close: @escaping () -> Void = {}) {
         self.paste = paste; self.copy = copy; self.pastePlain = pastePlain
         self.addToShelf = addToShelf; self.addToQueue = addToQueue
-        self.openLibrary = openLibrary; self.close = close
+        self.openLibrary = openLibrary; self.openHistorySettings = openHistorySettings; self.close = close
     }
 }
 

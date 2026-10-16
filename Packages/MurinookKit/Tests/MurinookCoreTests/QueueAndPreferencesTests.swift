@@ -53,11 +53,37 @@ final class QueueAndPreferencesTests: XCTestCase {
 
         XCTAssertTrue(try JSONDecoder().decode(AppPreferences.self, from: data).showsDockIcon)
     }
+
+    func testUnlimitedHistoryCountSurvivesInitializationAndCoding() throws {
+        let preferences = AppPreferences(maxHistoryItems: 0)
+        XCTAssertEqual(preferences.maxHistoryItems, 0)
+
+        let decoded = try JSONDecoder().decode(AppPreferences.self, from: JSONEncoder().encode(preferences))
+        XCTAssertEqual(decoded.maxHistoryItems, 0)
+    }
+
+    func testNegativeHistoryCountIsSanitizedAndZeroPersistsThroughStore() throws {
+        XCTAssertEqual(AppPreferences(maxHistoryItems: -4).maxHistoryItems, 1)
+        XCTAssertEqual(try JSONDecoder().decode(AppPreferences.self, from: Data("{\"maxHistoryItems\":-4}".utf8)).maxHistoryItems, 1)
+
+        let repository = FailingPreferencesRepository()
+        let store = PreferencesStore(repository: repository)
+        XCTAssertTrue(store.update { $0.maxHistoryItems = 0 })
+        XCTAssertEqual(store.value.maxHistoryItems, 0)
+        XCTAssertEqual(repository.load().maxHistoryItems, 0)
+
+        XCTAssertTrue(store.update { $0.maxHistoryItems = -4 })
+        XCTAssertEqual(store.value.maxHistoryItems, 1)
+    }
 }
 
 @MainActor
 private final class FailingPreferencesRepository: PreferencesRepository {
     var shouldFail = false
-    func load() -> AppPreferences { AppPreferences() }
-    func save(_ value: AppPreferences) throws { if shouldFail { throw CocoaError(.fileWriteUnknown) } }
+    var value = AppPreferences()
+    func load() -> AppPreferences { value }
+    func save(_ value: AppPreferences) throws {
+        if shouldFail { throw CocoaError(.fileWriteUnknown) }
+        self.value = value
+    }
 }

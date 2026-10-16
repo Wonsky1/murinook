@@ -220,7 +220,19 @@ public struct LibraryView: View {
         HStack {
             HStack(spacing: 6) { Circle().fill(MurinookPalette.accent).frame(width: 7, height: 7); Text("library.localHistory", bundle: .module) }
             Spacer()
-            if let preferences { Button { actions.manageRetention() } label: { libraryText("library.retention.\(preferences.value.retentionDays)") }.buttonStyle(.plain).foregroundStyle(MurinookPalette.muted) }
+            if let preferences {
+                Button { actions.manageRetention() } label: {
+                    HStack(spacing: 4) {
+                        libraryText("library.retention.\(preferences.value.retentionDays)")
+                        Text("·")
+                        if preferences.value.maxHistoryItems == 0 {
+                            libraryText("library.retention.unlimitedItems")
+                        } else {
+                            Text("library.retention.itemLimit \(preferences.value.maxHistoryItems.formatted(.number.locale(locale)))", bundle: .module)
+                        }
+                    }
+                }.buttonStyle(.plain).foregroundStyle(MurinookPalette.muted)
+            }
             Button { actions.export(Set(filteredClips.map(\.id))) } label: { Image(systemName: "square.and.arrow.up") }.buttonStyle(MurinookButtonStyle(variant: .quiet)).help(libraryText("library.export"))
             Button { actions.showSettings() } label: { Image(systemName: "gearshape") }.buttonStyle(MurinookButtonStyle(variant: .quiet)).help(libraryText("library.showSettings"))
         }.font(.system(size: 11)).padding(.horizontal, 18).frame(height: 38).background(MurinookPalette.surface)

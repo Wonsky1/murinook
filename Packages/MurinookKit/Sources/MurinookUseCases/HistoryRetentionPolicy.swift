@@ -15,7 +15,7 @@ enum HistoryRetentionPolicy {
                 kept.append(clip)
                 continue
             }
-            guard ordinaryItemCount < preferences.maxHistoryItems else { continue }
+            if preferences.maxHistoryItems > 0, ordinaryItemCount >= preferences.maxHistoryItems { continue }
             kept.append(clip)
             ordinaryItemCount += 1
         }

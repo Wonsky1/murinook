@@ -15,7 +15,7 @@ import MurinookDomain
         change(&next)
         next.shelfOffset = min(1, max(0, next.shelfOffset))
         next.retentionDays = max(0, next.retentionDays)
-        next.maxHistoryItems = max(1, next.maxHistoryItems)
+        next.maxHistoryItems = next.maxHistoryItems == 0 ? 0 : max(1, next.maxHistoryItems)
         do { try repository.save(next); value = next; error = nil; errorMessage = nil; return true }
         catch { self.error = .persistence(operation: "preferences.save"); errorMessage = "Could not save preferences."; return false }
     }

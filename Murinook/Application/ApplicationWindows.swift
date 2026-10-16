@@ -15,19 +15,21 @@ import OnboardingFeature
 final class ApplicationWindows {
     let quick = QuickAccessWindowController()
     let shelf = ShelfWindowController()
+    let menuBarAnchor = MenuBarAnchor()
     private let services: ApplicationServices
     private let router: ContentActionRouter
     private let effects: PreferencesEffectsController
     private let transfers: ShelfTransferController
     private let updates: AppUpdateController
     private let defaults: UserDefaults
+    private let foreground: WindowForegroundCoordinator
     private var presentation: ApplicationPresentationState
     private var library: FeatureWindowController?
     private var settings: FeatureWindowController?
     private let settingsNavigation = SettingsNavigation()
     private var queue: FeatureWindowController?
     private var onboarding: FeatureWindowController?
-    private var backgroundExplanation: FeatureWindowController?
+    private var backgroundExplanation: BackgroundExplanationController?
 
     init(services: ApplicationServices, router: ContentActionRouter,
          effects: PreferencesEffectsController, transfers: ShelfTransferController, updates: AppUpdateController,
@@ -35,6 +37,14 @@ final class ApplicationWindows {
         self.services = services; self.router = router; self.effects = effects; self.transfers = transfers
         self.updates = updates
         self.defaults = defaults
+        foreground = WindowForegroundCoordinator { phase, window in
+            services.diagnostics.event("window.presentation.\(phase)", fields: [
+                "window": window.title, "active": String(NSApp.isActive),
+                "activation_policy": String(NSApp.activationPolicy().rawValue),
+                "key": String(window.isKeyWindow), "visible": String(window.isVisible),
+                "minimized": String(window.isMiniaturized), "active_space": String(window.isOnActiveSpace),
+                "frame": NSStringFromRect(window.frame)])
+        }
         self.presentation = ApplicationPresentationState(
             onboardingCompleted: defaults.bool(forKey: "onboardingCompleted"),
             backgroundExplanationAcknowledged: defaults.bool(forKey: "backgroundExplanationAcknowledged"))
@@ -86,7 +96,8 @@ final class ApplicationWindows {
                 copy: { [weak self] in self?.router.copy($0.contentID) },
                 pastePlain: { [weak self] in self?.router.paste($0.contentID, plain: true) },
                 addToShelf: self.addToShelf, addToQueue: self.router.addToQueue,
-                openLibrary: self.showLibrary, close: self.quick.hide), preferences: self.services.preferences)
+                openLibrary: self.showLibrary, openHistorySettings: self.showHistorySettings,
+                close: self.quick.hide), preferences: self.services.preferences)
         }), title: localized("Quick access"))
     }
 
@@ -107,7 +118,7 @@ final class ApplicationWindows {
                         showUpdates: self.showUpdateSettings,
                         close: { [weak self] in self?.library?.close() }), preferences: self.services.preferences,
                         updates: self.updates.store)
-                }), autosaveName: "Murinook.Library", onClose: { [weak self] in self?.libraryClosed() })
+                }), foreground: foreground, autosaveName: "Murinook.Library", onClose: { [weak self] in self?.libraryClosed() })
         }
         library?.show()
     }
@@ -122,7 +133,7 @@ final class ApplicationWindows {
                         close: { [weak self] in self?.queue?.hide() },
                         pasteNextPlainText: { [weak self] in self?.router.paste($0.contentID, plain: true, queueID: $0.id) }),
                         pasteNextShortcut: self.services.preferences.value.shortcuts[.pasteNext].map(ShortcutDescriptionFormatter.string(for:)) ?? "—")
-                }), autosaveName: "Murinook.Queue")
+                }), foreground: foreground, autosaveName: "Murinook.Queue")
         }
         queue?.show()
     }
@@ -130,7 +141,7 @@ final class ApplicationWindows {
     func showSettings() {
         if settings == nil {
             settings = FeatureWindowController(title: localized("Settings"), size: NSSize(width: 920, height: 630),
-                minimumSize: NSSize(width: 780, height: 560), content: settingsView, autosaveName: "Murinook.Settings")
+                minimumSize: NSSize(width: 780, height: 560), content: settingsView, foreground: foreground, autosaveName: "Murinook.Settings")
         }
         settings?.show()
     }
@@ -172,7 +183,7 @@ final class ApplicationWindows {
                     requestPastePermission: self.services.permission.requestAccessibilityPrompt,
                     openAccessibilitySettings: self.effects.openAccessibilitySettings,
                     finish: { [weak self] in self?.finishOnboarding() }))
-            }), onClose: { [weak self] in self?.finishOnboarding() })
+            }), foreground: foreground, onClose: { [weak self] in self?.finishOnboarding() })
         onboarding?.show()
     }
 
@@ -187,7 +198,11 @@ final class ApplicationWindows {
         if presentation.onboardingVisible { showOnboarding() }
     }
 
-    func stop() { presentation.terminate() }
+    func stop() {
+        presentation.terminate()
+        foreground.cancelAll()
+        backgroundExplanation?.stop()
+    }
 
     private func finishOnboarding() {
         presentation.completeOnboarding()
@@ -199,19 +214,17 @@ final class ApplicationWindows {
     private func libraryClosed() {
         guard presentation.libraryClosed() else { return }
         if backgroundExplanation == nil {
-            backgroundExplanation = FeatureWindowController(title: "Murinook",
-                size: NSSize(width: 400, height: 300), minimumSize: NSSize(width: 400, height: 300),
-                content: AnyView(FeatureEnvironment(preferences: services.preferences) {
-                    BackgroundRunningView(dismiss: { [weak self] in self?.dismissBackgroundExplanation() })
-                }), onClose: { [weak self] in self?.dismissBackgroundExplanation() })
+            backgroundExplanation = BackgroundExplanationController(anchor: menuBarAnchor,
+                onDismiss: { [weak self] in self?.acknowledgeBackgroundExplanation() })
         }
-        backgroundExplanation?.show()
+        backgroundExplanation?.show(content: AnyView(FeatureEnvironment(preferences: services.preferences) {
+            BackgroundRunningView(dismiss: { [weak self] in self?.backgroundExplanation?.dismiss() })
+        }))
     }
 
-    private func dismissBackgroundExplanation() {
+    private func acknowledgeBackgroundExplanation() {
         presentation.dismissBackgroundExplanation()
         defaults.set(true, forKey: "backgroundExplanationAcknowledged")
-        backgroundExplanation?.hide()
     }
 
     func updateLanguage(_ locale: Locale) {

@@ -166,13 +166,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keep indefinitely"
+            "value": "No time limit"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Без обмеження"
+            "value": "Без обмеження часу"
           }
         }
       }
@@ -1350,13 +1350,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Oldest unpinned items are removed when the limit is reached."
+            "value": "Limit unpinned items or keep any number. Time retention is controlled separately."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Коли ліміт досягнуто, найстаріші незакріплені елементи вилучаються."
+            "value": "Обмежте кількість незакріплених елементів або зберігайте будь-яку кількість. Термін зберігання налаштовується окремо."
           }
         }
       }
@@ -1693,6 +1693,102 @@
           "stringUnit": {
             "state": "translated",
             "value": "Завантажте новий образ диска, закрийте Murinook і перетягніть нову програму в Applications, замінивши попередню."
+          }
+        }
+      }
+    },
+    "settings.noItemLimit": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No item limit"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Без обмеження кількості"
+          }
+        }
+      }
+    },
+    "settings.unlimitedTime.confirmTitle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep history without a time limit?"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зберігати історію без обмеження часу?"
+          }
+        }
+      }
+    },
+    "settings.unlimitedItems.confirmTitle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep history without an item limit?"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зберігати історію без обмеження кількості?"
+          }
+        }
+      }
+    },
+    "settings.unlimitedHistory.confirm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use no limit"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Прибрати обмеження"
+          }
+        }
+      }
+    },
+    "settings.unlimitedHistory.warningTitle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Some history limits are disabled"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Деякі обмеження історії вимкнені"
+          }
+        }
+      }
+    },
+    "settings.unlimitedHistory.warningMessage": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Murinook will not remove history using a disabled limit. Stored content can use more disk space, slow loading and search, and keep sensitive copies for longer. Other enabled limits still apply. You can restore limits or remove history at any time."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Murinook не видалятиме історію за вимкненим обмеженням. Збережений вміст може займати більше місця на диску, уповільнювати завантаження й пошук та довше зберігати чутливі дані. Інші ввімкнені обмеження діють. Ви можете повернути обмеження або видалити історію будь-коли."
           }
         }
       }

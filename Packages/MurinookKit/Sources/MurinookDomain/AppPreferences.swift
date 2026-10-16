@@ -27,7 +27,9 @@ public struct KeyCombination: Codable, Hashable, Sendable {
 
 public struct AppPreferences: Codable, Equatable, Sendable {
     public var captureEnabled: Bool
+    /// Zero disables age-based removal; any item-count limit still applies.
     public var retentionDays: Int
+    /// Zero disables the unpinned item-count limit; age-based retention still applies.
     public var maxHistoryItems: Int
     public var excludedBundleIDs: [String]
     public var showsDockIcon: Bool
@@ -48,7 +50,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
                 shelfOffset: Double = 0.5, autoRemoveShelfItems: Bool = true, autoShowShelf: Bool = true, languageCode: String? = nil,
                 appearance: AppAppearance = .system, historyLayout: HistoryLayout = .list, shortcuts: [ShortcutAction: KeyCombination] = KeyCombination.defaults,
                 automaticallyChecksForUpdates: Bool = true) {
-        self.captureEnabled = captureEnabled; self.retentionDays = max(0, retentionDays); self.maxHistoryItems = max(1, maxHistoryItems)
+        self.captureEnabled = captureEnabled; self.retentionDays = max(0, retentionDays); self.maxHistoryItems = maxHistoryItems == 0 ? 0 : max(1, maxHistoryItems)
         self.excludedBundleIDs = excludedBundleIDs; self.showsDockIcon = showsDockIcon; self.launchAtLogin = launchAtLogin
         self.shelfSide = shelfSide; self.shelfOffset = min(1, max(0, shelfOffset)); self.autoRemoveShelfItems = autoRemoveShelfItems
         self.autoShowShelf = autoShowShelf
