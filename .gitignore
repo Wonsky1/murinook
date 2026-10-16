@@ -11,6 +11,7 @@ work/
 /AGENTS.md
 /CLAUDE.md
 /*.md
+!/README.md
 /docs/
 /design/
 /outputs/
