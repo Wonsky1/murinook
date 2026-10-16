@@ -1,0 +1,33 @@
+.DS_Store
+.build/
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+.swiftpm/
+work/
+
+# Local development notes, previews and tooling
+/AGENTS.md
+/CLAUDE.md
+/*.md
+/docs/
+/design/
+/outputs/
+/.cursor/
+/.codex/
+/.agents/
+/.claude/
+/.omc/
+
+# Local credentials and release outputs
+.env
+.env.*
+*.p12
+*.p8
+*.key
+*.mobileprovision
+*.provisionprofile
+*.dmg
+*.xcarchive/
+*.log

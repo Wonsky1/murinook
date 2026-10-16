@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: macos-15
+    permissions:
+      contents: write
+    env:
+      RELEASE_TAG: ${{ github.ref_name }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Select stable Xcode 26
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcode_app="$(/usr/bin/find /Applications -maxdepth 1 -type d -name 'Xcode_26*.app' ! -iname '*beta*' ! -iname '*rc*' -print | /usr/bin/sort | /usr/bin/tail -n 1)"
+          if [[ -z "$xcode_app" ]]; then
+            echo 'No stable Xcode 26 installation found on this runner.' >&2
+            exit 1
+          fi
+          echo "DEVELOPER_DIR=$xcode_app/Contents/Developer" >> "$GITHUB_ENV"
+          DEVELOPER_DIR="$xcode_app/Contents/Developer" xcodebuild -version | /usr/bin/grep -Eq '^Xcode 26\.'
+
+      - name: Run Swift tests
+        run: swift test --package-path Packages/MurinookKit
+
+      - name: Package universal disk image
+        run: ./scripts/package-dmg.sh
+
+      - name: Publish GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          version="${RELEASE_TAG#v}"
+          dmg="work/releases/Murinook-${version}-universal.dmg"
+          sums='work/releases/SHA256SUMS'
+          test -f "$dmg"
+          test -f "$sums"
+          notes='Murinook for macOS 15 and later, for Apple silicon and Intel. Download the disk image and drag Murinook to Applications. This build is ad-hoc signed and is not notarized; macOS may require Open Anyway in Privacy & Security.'
+          release_args=(--verify-tag --title "$version" --notes "$notes")
+          if [[ "$version" == *-* ]]; then
+            release_args+=(--prerelease --latest=false)
+          else
+            release_args+=(--latest=true)
+          fi
+          gh release create "$RELEASE_TAG" "$dmg" "$sums" "${release_args[@]}"

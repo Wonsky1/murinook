@@ -1,0 +1,710 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "onboarding.back": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Назад"
+          }
+        }
+      }
+    },
+    "onboarding.continue": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Продовжити"
+          }
+        }
+      }
+    },
+    "onboarding.enablePaste": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set up paste"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Налаштувати вставлення"
+          }
+        }
+      }
+    },
+    "onboarding.eyebrow": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A LITTLE NOOK FOR THINGS IN TRANSIT"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ЗАТИШНЕ МІСЦЕ ДЛЯ РЕЧЕЙ У ДОРОЗІ"
+          }
+        }
+      }
+    },
+    "onboarding.finish": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finish setup"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Завершити"
+          }
+        }
+      }
+    },
+    "onboarding.permissionExplanation": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To paste into another app, Murinook needs Accessibility permission so it can send the standard Command-V keystroke. A paste command cannot confirm that the other app inserted the item."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Щоб вставляти в інші програми, Murinook потрібен дозвіл «Універсальний доступ» для надсилання звичайного сполучення Command-V. Команда не може підтвердити, що інша програма вставила елемент."
+          }
+        }
+      }
+    },
+    "onboarding.permissionSettings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Accessibility settings"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відкрити налаштування універсального доступу"
+          }
+        }
+      }
+    },
+    "onboarding.product": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Murinook"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Murinook"
+          }
+        }
+      }
+    },
+    "onboarding.skip": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip setup"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пропустити налаштування"
+          }
+        }
+      }
+    },
+    "settings.capture": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clipboard capture"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Збір буфера обміну"
+          }
+        }
+      }
+    },
+    "onboarding.title.0": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A calm place for copied things"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Спокійне місце для скопійованого"
+          }
+        }
+      }
+    },
+    "onboarding.title.1": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your clipboard, with a memory"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Буфер обміну, який пам’ятає"
+          }
+        }
+      }
+    },
+    "onboarding.title.2": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A temporary place to park things"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тимчасове місце для речей"
+          }
+        }
+      }
+    },
+    "onboarding.title.3": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste a few things in order"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вставляйте кілька речей по черзі"
+          }
+        }
+      }
+    },
+    "onboarding.message.0": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Murinook keeps clipboard history, a drag shelf and a short paste queue close at hand."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Murinook зберігає історію буфера обміну, полицю для перетягування та коротку чергу вставлення."
+          }
+        }
+      }
+    },
+    "onboarding.message.1": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supported copies are saved on this Mac. Pause capture or exclude sensitive apps any time."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Підтримувані копії зберігаються на цьому Mac. Збір можна призупинити або виключити чутливі програми."
+          }
+        }
+      }
+    },
+    "onboarding.message.2": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drag supported content to the screen edge. The shelf stays open after a drop and can be hidden to a small handle."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перетягніть підтримуваний вміст до краю екрана. Після додавання полиця залишиться відкритою; її можна згорнути до маленької кнопки."
+          }
+        }
+      }
+    },
+    "onboarding.message.3": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add clips to the queue and rearrange them before sending each paste command."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Додавайте фрагменти до черги й змінюйте порядок перед кожною командою вставлення."
+          }
+        }
+      }
+    },
+    "onboarding.visual.0": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clipboard history · Shelf · Paste queue"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Історія буфера · Полиця · Черга вставлення"
+          }
+        }
+      }
+    },
+    "onboarding.visual.1": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search and organize your copies"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Шукайте й упорядковуйте копії"
+          }
+        }
+      }
+    },
+    "onboarding.visual.2": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep a few things within reach"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тримайте потрібне під рукою"
+          }
+        }
+      }
+    },
+    "onboarding.visual.3": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose when to paste each item"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вибирайте, коли вставляти кожен елемент"
+          }
+        }
+      }
+    },
+    "onboarding.bullet.0.0": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your copies stay on this Mac"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Копії залишаються на цьому Mac"
+          }
+        }
+      }
+    },
+    "onboarding.bullet.0.1": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No account or sync required"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обліковий запис і синхронізація не потрібні"
+          }
+        }
+      }
+    },
+    "onboarding.bullet.0.2": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You control capture and retention"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ви керуєте збором і терміном зберігання"
+          }
+        }
+      }
+    },
+    "onboarding.bullet.1.0": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search text, titles, tags and notes"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Шукайте текст, назви, теги й нотатки"
+          }
+        }
+      }
+    },
+    "onboarding.bullet.1.1": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pin important items and make collections"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закріплюйте важливе й створюйте добірки"
+          }
+        }
+      }
+    },
+    "onboarding.bullet.2.0": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drag files, images, text and links"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перетягуйте файли, зображення, текст і посилання"
+          }
+        }
+      }
+    },
+    "onboarding.bullet.2.1": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Group and reorder shelf items"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Групуйте й переставляйте елементи"
+          }
+        }
+      }
+    },
+    "onboarding.bullet.2.2": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removing a shelf item never deletes its original file"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вилучення з полиці не видаляє оригінальний файл"
+          }
+        }
+      }
+    },
+    "onboarding.bullet.3.0": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reorder the queue any time"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Змінюйте порядок черги будь-коли"
+          }
+        }
+      }
+    },
+    "onboarding.bullet.3.1": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A failed dispatch leaves the item in place"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Після невдалої команди елемент залишиться на місці"
+          }
+        }
+      }
+    },
+    "onboarding.bullet.3.2": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy is always available as a fallback"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Копіювання завжди доступне як запасний варіант"
+          }
+        }
+      }
+    },
+    "onboarding.step %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Step %lld of 4"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Крок %lld із 4"
+          }
+        }
+      }
+    },
+    "Murinook.diagram.note": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meeting notes"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нотатки зустрічі"
+          }
+        }
+      }
+    },
+    "Murinook.diagram.notePreview": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ideas for Friday…"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ідеї на п’ятницю…"
+          }
+        }
+      }
+    },
+    "Murinook.diagram.link": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Design reference"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зразок дизайну"
+          }
+        }
+      }
+    },
+    "Murinook.diagram.linkPreview": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "example.com/design"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "example.com/design"
+          }
+        }
+      }
+    },
+    "Murinook.diagram.image": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summer palette"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Літня палітра"
+          }
+        }
+      }
+    },
+    "Murinook.diagram.imagePreview": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Image copied yesterday"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зображення скопійовано вчора"
+          }
+        }
+      }
+    },
+    "Murinook.diagram.shelf": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temporary shelf"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тимчасова полиця"
+          }
+        }
+      }
+    },
+    "Murinook.diagram.file": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes.pdf"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нотатки.pdf"
+          }
+        }
+      }
+    },
+    "Murinook.diagram.drop": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drop here"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перетягніть сюди"
+          }
+        }
+      }
+    },
+    "Murinook.diagram.shortcut": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste the next item"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вставте наступний елемент"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

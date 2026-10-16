@@ -1,0 +1,552 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "common.close": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрити"
+          }
+        }
+      }
+    },
+    "shelf.clear": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear Shelf"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Очистити полицю"
+          }
+        }
+      }
+    },
+    "shelf.dragHint": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep useful items nearby"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тримайте потрібне поруч"
+          }
+        }
+      }
+    },
+    "shelf.dropItems": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drop items here"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перетягніть елементи сюди"
+          }
+        }
+      }
+    },
+    "shelf.dropNow": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drop to add to Shelf"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відпустіть, щоб додати на полицю"
+          }
+        }
+      }
+    },
+    "shelf.dropNowMessage": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The item will stay here until you remove it."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Елемент залишиться тут, доки ви його не вилучите."
+          }
+        }
+      }
+    },
+    "shelf.dropTypes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Files · images · text · links"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Файли · зображення · текст · посилання"
+          }
+        }
+      }
+    },
+    "shelf.edge": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf edge"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Край полиці"
+          }
+        }
+      }
+    },
+    "shelf.emptyMessage": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drop files, images, text or links here to keep them close."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перетягніть сюди файли, зображення, текст або посилання."
+          }
+        }
+      }
+    },
+    "shelf.emptyTitle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your shelf is empty"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Полиця порожня"
+          }
+        }
+      }
+    },
+    "shelf.group": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Group"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Згрупувати"
+          }
+        }
+      }
+    },
+    "shelf.groupSelected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Group selected items"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Згрупувати вибрані елементи"
+          }
+        }
+      }
+    },
+    "shelf.hide": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide Shelf"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сховати полицю"
+          }
+        }
+      }
+    },
+    "shelf.leftEdge": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Left edge"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Лівий край"
+          }
+        }
+      }
+    },
+    "shelf.moveDown": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move later"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити нижче"
+          }
+        }
+      }
+    },
+    "shelf.moveUp": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move earlier"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити вище"
+          }
+        }
+      }
+    },
+    "shelf.position": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Position"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Положення"
+          }
+        }
+      }
+    },
+    "shelf.preview": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переглянути"
+          }
+        }
+      }
+    },
+    "shelf.remove": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove from Shelf"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вилучити з полиці"
+          }
+        }
+      }
+    },
+    "shelf.removeSelected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove selected"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вилучити вибране"
+          }
+        }
+      }
+    },
+    "shelf.rightEdge": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right edge"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Правий край"
+          }
+        }
+      }
+    },
+    "shelf.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Полиця"
+          }
+        }
+      }
+    },
+    "shelf.undo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Undo"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Скасувати"
+          }
+        }
+      }
+    },
+    "shelf.ungroup": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungroup"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Розгрупувати"
+          }
+        }
+      }
+    },
+    "shelf.itemCount %lld": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "1 item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld items"
+                }
+              }
+            }
+          }
+        },
+        "uk": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld елемент"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld елементи"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld елементів"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld елемента"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "shelf.selectedCount %lld": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "1 selected"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld selected"
+                }
+              }
+            }
+          }
+        },
+        "uk": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld вибрано"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld вибрано"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld вибрано"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld вибрано"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "shelf.dragItem": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drag item"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перетягнути елемент"
+          }
+        }
+      }
+    },
+    "shelf.localOnly": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Only on this Mac" } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Лише на цьому Mac" } }
+      }
+    },
+    "shelf.kind.file": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "File" } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Файл" } }
+      }
+    },
+    "shelf.kind.image": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Image" } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Зображення" } }
+      }
+    },
+    "shelf.kind.link": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Link" } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Посилання" } }
+      }
+    },
+    "shelf.kind.text": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Text" } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Текст" } }
+      }
+    },
+    "shelf.kind.code": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Code" } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Код" } }
+      }
+    },
+    "shelf.kind.color": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Color" } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Колір" } }
+      }
+    }
+  },
+  "version": "1.0"
+}
