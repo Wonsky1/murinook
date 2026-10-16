@@ -6,10 +6,10 @@ A native macOS clipboard manager and temporary drag-and-drop shelf. Keep recent 
 
 ## Download
 
-[Download Murinook 0.1.0-beta.3 (universal DMG)](https://github.com/Wonsky1/murinook/releases/download/v0.1.0-beta.3/Murinook-0.1.0-beta.3-universal.dmg) · [Release notes](https://github.com/Wonsky1/murinook/releases/tag/v0.1.0-beta.3)
+[Download Murinook 0.1.0-beta.4 (universal DMG)](https://github.com/Wonsky1/murinook/releases/download/v0.1.0-beta.4/Murinook-0.1.0-beta.4-universal.dmg) · [Release notes](https://github.com/Wonsky1/murinook/releases/tag/v0.1.0-beta.4)
 
 1. Open the DMG and drag **Murinook** into **Applications**.
-2. Launch Murinook from Applications. Its icon appears in the menu bar; showing it in the Dock is optional.
+2. Launch Murinook from Applications. The Library opens, with a short introduction on your first launch. Its icon also appears in the menu bar; showing it in the Dock is optional.
 3. If direct paste asks for access, grant Murinook **Accessibility** permission in System Settings. Clipboard copying remains available without that permission.
 
 This beta is ad-hoc signed and **not notarized**. If macOS blocks it, first try opening the app, then go to **System Settings → Privacy & Security → Open Anyway**. See [Apple's instructions](https://support.apple.com/en-us/102445).
@@ -37,9 +37,11 @@ Change these in **Settings → Shortcuts**. In Quick Access, click a clip or pre
 
 ## Updates
 
+Closing the Library keeps Murinook running in the background. A one-time explanation shows how to find it in the menu bar. To exit completely, choose **Quit Murinook** from that menu. Opening Murinook again brings the Library back.
+
 Murinook checks GitHub Releases at launch when automatic checks are enabled. It offers **stable releases only**; beta releases are skipped. You can also choose **Check for updates** from the menu bar or **Settings → Updates**.
 
-When a newer stable version is available, the menu bar icon gains a small indicator and the Updates page offers **Download DMG** and **Release notes**. Installation is manual:
+When a newer stable version is available, the Library shows an update banner, the menu bar icon gains a small indicator, and the Updates page offers **Download DMG** and **Release notes**. Installation is manual:
 
 1. Download and open the new DMG.
 2. Quit Murinook.
@@ -47,7 +49,7 @@ When a newer stable version is available, the menu bar icon gains a small indica
 
 Development builds and this ad-hoc signed beta use different signing identities. macOS may ask you to authorize access to existing app data or grant Accessibility access again. Keep a backup when moving between development and release builds.
 
-Automatic checks can be disabled in Settings. The currently published `0.1.0-beta.3` is a prerelease, so it is available through the download link above rather than the stable update feed.
+Automatic checks can be disabled in Settings. The currently published `0.1.0-beta.4` is a prerelease, so it is available through the download link above rather than the stable update feed.
 
 ## Privacy and your data
 

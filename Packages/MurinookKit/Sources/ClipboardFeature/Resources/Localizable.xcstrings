@@ -1640,6 +1640,38 @@
           }
         }
       }
+    },
+    "library.updateAvailable %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update available: version %@"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Доступне оновлення: версія %@"
+          }
+        }
+      }
+    },
+    "library.viewUpdate": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View update"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переглянути оновлення"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

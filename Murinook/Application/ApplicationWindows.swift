@@ -5,6 +5,7 @@ import Observation
 import SwiftUI
 import MurinookDomain
 import MurinookUseCases
+import MurinookPresentation
 import ClipboardFeature
 import ShelfFeature
 import PasteQueueFeature
@@ -19,16 +20,24 @@ final class ApplicationWindows {
     private let effects: PreferencesEffectsController
     private let transfers: ShelfTransferController
     private let updates: AppUpdateController
+    private let defaults: UserDefaults
+    private var presentation: ApplicationPresentationState
     private var library: FeatureWindowController?
     private var settings: FeatureWindowController?
     private let settingsNavigation = SettingsNavigation()
     private var queue: FeatureWindowController?
     private var onboarding: FeatureWindowController?
+    private var backgroundExplanation: FeatureWindowController?
 
     init(services: ApplicationServices, router: ContentActionRouter,
-         effects: PreferencesEffectsController, transfers: ShelfTransferController, updates: AppUpdateController) {
+         effects: PreferencesEffectsController, transfers: ShelfTransferController, updates: AppUpdateController,
+         defaults: UserDefaults) {
         self.services = services; self.router = router; self.effects = effects; self.transfers = transfers
         self.updates = updates
+        self.defaults = defaults
+        self.presentation = ApplicationPresentationState(
+            onboardingCompleted: defaults.bool(forKey: "onboardingCompleted"),
+            backgroundExplanationAcknowledged: defaults.bool(forKey: "backgroundExplanationAcknowledged"))
     }
 
     func start() {
@@ -95,8 +104,10 @@ final class ApplicationWindows {
                         loadContent: { [weak self] id in try? await self?.services.storage.contents.get(id) },
                         showShelf: self.shelf.show, showSettings: self.showSettings,
                         manageRetention: self.showHistorySettings,
-                        close: { [weak self] in self?.library?.hide() }), preferences: self.services.preferences)
-                }), autosaveName: "Murinook.Library")
+                        showUpdates: self.showUpdateSettings,
+                        close: { [weak self] in self?.library?.close() }), preferences: self.services.preferences,
+                        updates: self.updates.store)
+                }), autosaveName: "Murinook.Library", onClose: { [weak self] in self?.libraryClosed() })
         }
         library?.show()
     }
@@ -154,16 +165,53 @@ final class ApplicationWindows {
     }
 
     func showOnboarding() {
+        if let onboarding { onboarding.show(); return }
         onboarding = FeatureWindowController(title: "Murinook", size: NSSize(width: 760, height: 550),
             minimumSize: NSSize(width: 760, height: 550), content: AnyView(FeatureEnvironment(preferences: self.services.preferences) {
                 OnboardingView(store: self.services.preferences, actions: OnboardingActions(
                     requestPastePermission: self.services.permission.requestAccessibilityPrompt,
-                    openAccessibilitySettings: self.effects.openAccessibilitySettings, finish: { [weak self] in
-                        UserDefaults.standard.set(true, forKey: "onboardingCompleted")
-                        self?.onboarding?.hide(); self?.showLibrary()
-                    }))
-            }))
+                    openAccessibilitySettings: self.effects.openAccessibilitySettings,
+                    finish: { [weak self] in self?.finishOnboarding() }))
+            }), onClose: { [weak self] in self?.finishOnboarding() })
         onboarding?.show()
+    }
+
+    func showLaunchExperience() {
+        let needsOnboarding = presentation.launch()
+        showLibrary()
+        if needsOnboarding { showOnboarding() }
+    }
+
+    func reopen() {
+        showLibrary()
+        if presentation.onboardingVisible { showOnboarding() }
+    }
+
+    func stop() { presentation.terminate() }
+
+    private func finishOnboarding() {
+        presentation.completeOnboarding()
+        defaults.set(true, forKey: "onboardingCompleted")
+        onboarding?.hide()
+        showLibrary()
+    }
+
+    private func libraryClosed() {
+        guard presentation.libraryClosed() else { return }
+        if backgroundExplanation == nil {
+            backgroundExplanation = FeatureWindowController(title: "Murinook",
+                size: NSSize(width: 400, height: 300), minimumSize: NSSize(width: 400, height: 300),
+                content: AnyView(FeatureEnvironment(preferences: services.preferences) {
+                    BackgroundRunningView(dismiss: { [weak self] in self?.dismissBackgroundExplanation() })
+                }), onClose: { [weak self] in self?.dismissBackgroundExplanation() })
+        }
+        backgroundExplanation?.show()
+    }
+
+    private func dismissBackgroundExplanation() {
+        presentation.dismissBackgroundExplanation()
+        defaults.set(true, forKey: "backgroundExplanationAcknowledged")
+        backgroundExplanation?.hide()
     }
 
     func updateLanguage(_ locale: Locale) {

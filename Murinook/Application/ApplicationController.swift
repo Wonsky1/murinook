@@ -18,8 +18,10 @@ import MurinookDomain
     private let effects: PreferencesEffectsController
     private let router: ContentActionRouter
     private let errors: ErrorPresenter
+    private let defaults: UserDefaults
 
-    init(directory: URL) throws {
+    init(directory: URL, defaults: UserDefaults = .standard) throws {
+        self.defaults = defaults
         services = try ApplicationServices(directory: directory)
         let versionLabel = Bundle.main.object(forInfoDictionaryKey: "MurinookReleaseVersion") as? String
             ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0"
@@ -33,7 +35,8 @@ import MurinookDomain
         effects = PreferencesEffectsController(services: services, errors: errors)
         let transfers = ShelfTransferController(services: services, errors: errors)
         transfers.requestCleanup = maintenance.request
-        windows = ApplicationWindows(services: services, router: router, effects: effects, transfers: transfers, updates: updates)
+        windows = ApplicationWindows(services: services, router: router, effects: effects, transfers: transfers,
+            updates: updates, defaults: defaults)
         capture = ClipboardCaptureController(services: services)
         visualBackfill = ContentVisualBackfill(services: services)
         router.beforePaste = { [weak self] in self?.windows.quick.hide() }
@@ -67,9 +70,9 @@ import MurinookDomain
         } catch {
             errors.show("Could not clean old content", detail: error.localizedDescription)
         }
-        if !UserDefaults.standard.bool(forKey: "shelfTransferRemovalEnabled") {
+        if !defaults.bool(forKey: "shelfTransferRemovalEnabled") {
             services.preferences.update { $0.autoRemoveShelfItems = true }
-            UserDefaults.standard.set(true, forKey: "shelfTransferRemovalEnabled")
+            defaults.set(true, forKey: "shelfTransferRemovalEnabled")
         }
         maintenance.start()
         windows.start()
@@ -81,10 +84,10 @@ import MurinookDomain
         isReady = true
         updates.start()
         services.diagnostics.event("application.ready", fields: ["auto_show_shelf": String(services.preferences.value.autoShowShelf)])
-        if !UserDefaults.standard.bool(forKey: "onboardingCompleted") { windows.showOnboarding() }
+        windows.showLaunchExperience()
     }
 
-    func stop() { updates.stop(); router.stop(); maintenance.stop(); visualBackfill.stop(); capture.stop(); services.dragMonitor.stop(); services.bookmarks.releaseAllAccess() }
+    func stop() { windows.stop(); updates.stop(); router.stop(); maintenance.stop(); visualBackfill.stop(); capture.stop(); services.dragMonitor.stop(); services.bookmarks.releaseAllAccess() }
 
     func perform(_ action: ShortcutAction) {
         switch action {

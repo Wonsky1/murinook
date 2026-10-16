@@ -33,6 +33,7 @@ public struct LibraryActions {
     public var showShelf: () -> Void
     public var showSettings: () -> Void
     public var manageRetention: () -> Void
+    public var showUpdates: () -> Void
     public var close: () -> Void
 
     public init(copy: @escaping (Clip) -> Void = { _ in }, paste: @escaping (Clip) -> Void = { _ in },
@@ -42,11 +43,13 @@ public struct LibraryActions {
                 loadContent: @escaping (UUID) async -> ClipContent? = { _ in nil },
                 showShelf: @escaping () -> Void = {}, showSettings: @escaping () -> Void = {},
                 manageRetention: @escaping () -> Void = {},
+                showUpdates: @escaping () -> Void = {},
                 close: @escaping () -> Void = {}) {
         self.copy = copy; self.paste = paste; self.pastePlain = pastePlain
         self.addToShelf = addToShelf; self.addToQueue = addToQueue
         self.preview = preview; self.reveal = reveal; self.export = export; self.loadContent = loadContent
         self.showShelf = showShelf; self.showSettings = showSettings; self.close = close
         self.manageRetention = manageRetention
+        self.showUpdates = showUpdates
     }
 }

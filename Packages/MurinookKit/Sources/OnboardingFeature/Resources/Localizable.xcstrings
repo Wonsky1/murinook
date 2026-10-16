@@ -704,6 +704,70 @@
           }
         }
       }
+    },
+    "backgroundRunning.gotIt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Got it"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зрозуміло"
+          }
+        }
+      }
+    },
+    "backgroundRunning.message": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Closing the Library keeps Murinook available from the menu bar."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Після закриття Бібліотеки Murinook залишається доступним у рядку меню."
+          }
+        }
+      }
+    },
+    "backgroundRunning.quitPath": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To quit, click the Murinook icon in the menu bar → Quit Murinook."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Щоб вийти, натисніть значок Murinook у верхньому рядку меню → «Вийти з Murinook»."
+          }
+        }
+      }
+    },
+    "backgroundRunning.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Murinook is still running"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Murinook продовжує працювати"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

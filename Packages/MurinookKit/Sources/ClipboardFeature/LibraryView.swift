@@ -17,6 +17,7 @@ public struct LibraryView: View {
     let store: HistoryStore
     let actions: LibraryActions
     let preferences: PreferencesStore?
+    let updates: UpdateStore?
     @Environment(\.locale) private var locale
     @State var query = ""
     @State var selectedIDs = Set<UUID>()
@@ -37,8 +38,8 @@ public struct LibraryView: View {
     @State private var multiSelect = false
     @State private var selectionAnchorID: UUID?
 
-    public init(store: HistoryStore, actions: LibraryActions, preferences: PreferencesStore? = nil) {
-        self.store = store; self.actions = actions; self.preferences = preferences
+    public init(store: HistoryStore, actions: LibraryActions, preferences: PreferencesStore? = nil, updates: UpdateStore? = nil) {
+        self.store = store; self.actions = actions; self.preferences = preferences; self.updates = updates
     }
 
     private var layout: HistoryLayout { preferences?.value.historyLayout ?? .list }
@@ -72,6 +73,9 @@ public struct LibraryView: View {
     public var body: some View {
         VStack(spacing: 0) {
             windowToolbar
+            if case .available(let release) = updates?.state {
+                LibraryUpdateBanner(version: release.version.description, showUpdates: actions.showUpdates)
+            }
             Rectangle().fill(MurinookPalette.border).frame(height: 1)
             collectionBar
             focusPreview
