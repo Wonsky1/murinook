@@ -2,39 +2,53 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing version tag to publish
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 jobs:
   release:
-    runs-on: macos-15
+    if: github.event_name == 'workflow_dispatch' || github.ref_type == 'tag' || contains(github.event.head_commit.message, '[release]')
+    runs-on: macos-26
     permissions:
       contents: write
     env:
-      RELEASE_TAG: ${{ github.ref_name }}
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_type == 'tag' && github.ref_name || '' }}
     steps:
       - name: Check out source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref }}
 
-      - name: Select stable Xcode 26
+      - name: Verify release source
         shell: bash
         run: |
           set -euo pipefail
-          xcode_app="$(/usr/bin/find /Applications -maxdepth 1 -type d -name 'Xcode_26*.app' ! -iname '*beta*' ! -iname '*rc*' -print | /usr/bin/sort | /usr/bin/tail -n 1)"
-          if [[ -z "$xcode_app" ]]; then
-            echo 'No stable Xcode 26 installation found on this runner.' >&2
-            exit 1
+          if [[ -z "$RELEASE_TAG" ]]; then
+            version="$(awk '$1 == "MURINOOK_RELEASE_VERSION" { print $3 }' Config/Version.xcconfig)"
+            [[ "$version" =~ ^[0-9A-Za-z.+-]+$ ]]
+            RELEASE_TAG="v$version"
+            echo "RELEASE_TAG=$RELEASE_TAG" >> "$GITHUB_ENV"
           fi
-          echo "DEVELOPER_DIR=$xcode_app/Contents/Developer" >> "$GITHUB_ENV"
-          DEVELOPER_DIR="$xcode_app/Contents/Developer" xcodebuild -version | /usr/bin/grep -Eq '^Xcode 26\.'
+          [[ "$RELEASE_TAG" =~ ^v[0-9A-Za-z.+-]+$ ]]
+          git rev-parse --verify "refs/tags/$RELEASE_TAG"
+          git diff --exit-code "$RELEASE_TAG" HEAD -- Config Murinook Murinook.xcodeproj Packages scripts
+
+      - name: Check Xcode toolchain
+        run: xcodebuild -version
 
       - name: Run Swift tests
-        run: swift test --package-path Packages/MurinookKit
+        run: xcrun swift test --package-path Packages/MurinookKit
 
       - name: Package universal disk image
         run: ./scripts/package-dmg.sh
