@@ -75,7 +75,7 @@ public final class BookmarkAdapter {
         }
         // Shelf transfers read/copy the original; a Finder drop need not grant write access.
         do {
-            let bookmark = try url.bookmarkData(options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess], includingResourceValuesForKeys: nil, relativeTo: nil)
+            let bookmark = try url.bookmarkData(options: [], includingResourceValuesForKeys: nil, relativeTo: nil)
             diagnostics?.event("bookmark.create.success", fields: fields.merging(["bookmarkLength": String(bookmark.count)]) { _, new in new })
             return bookmark
         }
@@ -97,7 +97,7 @@ public final class BookmarkAdapter {
         diagnostics?.event("bookmark.resolve.begin", fields: ["bookmarkLength": String(bookmark.count)])
         var stale = false
         let url: URL
-        do { url = try URL(resolvingBookmarkData: bookmark, options: [.withSecurityScope, .withoutUI], relativeTo: nil, bookmarkDataIsStale: &stale) }
+        do { url = try URL(resolvingBookmarkData: bookmark, options: [.withoutUI], relativeTo: nil, bookmarkDataIsStale: &stale) }
         catch {
             diagnostics?.event("bookmark.resolve.failure", fields: diagnostics?.errorFields(error) ?? [:])
             throw error
@@ -360,7 +360,7 @@ public final class FileImportAdapter {
                 do {
                     if isInPlace {
                         // Capture access before the provider callback's grant expires.
-                        let bookmark = try url.bookmarkData(options: [.withSecurityScope],
+                        let bookmark = try url.bookmarkData(options: [],
                             includingResourceValuesForKeys: nil, relativeTo: nil)
                         let size = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize
                         continuation.resume(returning: FileReference(url: url, bookmark: bookmark, isOwnedCopy: Self.isOwnedFile(url, inside: destinationDirectory), byteCount: size))

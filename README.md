@@ -6,7 +6,7 @@ A native macOS clipboard manager and temporary drag-and-drop shelf. Keep recent 
 
 ## Download
 
-[Download Murinook 0.1.0-beta.5 (universal DMG)](https://github.com/Wonsky1/murinook/releases/download/v0.1.0-beta.5/Murinook-0.1.0-beta.5-universal.dmg) · [Release notes](https://github.com/Wonsky1/murinook/releases/tag/v0.1.0-beta.5)
+[Download Murinook 0.1.0-beta.7 (universal DMG)](https://github.com/Wonsky1/murinook/releases/download/v0.1.0-beta.7/Murinook-0.1.0-beta.7-universal.dmg) · [Release notes](https://github.com/Wonsky1/murinook/releases/tag/v0.1.0-beta.7)
 
 1. Open the DMG and drag **Murinook** into **Applications**.
 2. Launch Murinook from Applications. The Library opens, with a short introduction on your first launch. Its icon also appears in the menu bar; showing it in the Dock is optional.
@@ -59,6 +59,7 @@ Automatic checks can be disabled in Settings. The currently published `0.1.0-bet
 - Dragging a shelf file out copies it to the destination. Accepted transfers remove it from the shelf when automatic removal is enabled; removing it from the shelf never deletes its original.
 - Capture can be paused and apps can be excluded. Clipboard representations marked private, concealed, or transient are skipped, but these conventions depend on the source app. Clipboard history may contain sensitive information.
 - Optional update checks request public release metadata from GitHub. Clipboard contents are not sent in those requests. There is no cloud sync or image OCR in this release.
+- To support direct paste into other apps, this direct-install beta runs outside macOS App Sandbox. macOS still requires Accessibility permission for paste commands; without the sandbox, Murinook has broader access to your user account if compromised.
 
 Deleting only the `.app` leaves its separate data storage in place. Cleanup tools that also remove application data can erase history and settings. Back up important data before a complete uninstall.
 

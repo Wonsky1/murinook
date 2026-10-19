@@ -7,6 +7,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         do {
+            let bundleIdentifier = Bundle.main.bundleIdentifier ?? "wonsky.Murinook"
+            try SandboxDataMigration.migrate(bundleIdentifier: bundleIdentifier)
             let directory = try FileManager.default.url(for: .applicationSupportDirectory,
                 in: .userDomainMask, appropriateFor: nil, create: true).appending(path: "Murinook", directoryHint: .isDirectory)
             let controller = try ApplicationController(directory: directory)
