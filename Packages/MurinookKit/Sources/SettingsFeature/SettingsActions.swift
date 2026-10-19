@@ -6,7 +6,8 @@ public struct SettingsActions {
     public var resetShortcut: (ShortcutAction) -> Void
     public var disableShortcut: (ShortcutAction) -> Void
     public var showAccessibilityHelp: () -> Void
-    public var requestPastePermission: () -> Void
+    public var requestPostEventAccess: () -> Void
+    public var hasPostEventAccess: () -> Bool
     public var openLoginItemsSettings: () -> Void
     public var setDockIconVisible: (Bool) -> Void
     public var setLaunchAtLogin: (Bool) -> Void
@@ -21,7 +22,8 @@ public struct SettingsActions {
     public init(chooseExcludedApps: @escaping () -> Void = {}, recordShortcut: @escaping (ShortcutAction) -> Void = { _ in },
                 resetShortcut: @escaping (ShortcutAction) -> Void = { _ in },
                 disableShortcut: @escaping (ShortcutAction) -> Void = { _ in },
-                showAccessibilityHelp: @escaping () -> Void = {}, requestPastePermission: @escaping () -> Void = {},
+                showAccessibilityHelp: @escaping () -> Void = {}, requestPostEventAccess: @escaping () -> Void = {},
+                hasPostEventAccess: @escaping () -> Bool = { false },
                 openLoginItemsSettings: @escaping () -> Void = {}, setDockIconVisible: @escaping (Bool) -> Void = { _ in },
                 setLaunchAtLogin: @escaping (Bool) -> Void = { _ in },
                 clearUnpinnedHistory: @escaping () -> Void = {},
@@ -42,7 +44,8 @@ public struct SettingsActions {
                 }) {
         self.chooseExcludedApps = chooseExcludedApps; self.recordShortcut = recordShortcut
         self.resetShortcut = resetShortcut; self.disableShortcut = disableShortcut
-        self.showAccessibilityHelp = showAccessibilityHelp; self.requestPastePermission = requestPastePermission
+        self.showAccessibilityHelp = showAccessibilityHelp; self.requestPostEventAccess = requestPostEventAccess
+        self.hasPostEventAccess = hasPostEventAccess
         self.openLoginItemsSettings = openLoginItemsSettings; self.setDockIconVisible = setDockIconVisible
         self.setLaunchAtLogin = setLaunchAtLogin
         self.clearUnpinnedHistory = clearUnpinnedHistory

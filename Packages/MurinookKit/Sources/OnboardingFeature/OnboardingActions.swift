@@ -1,15 +1,15 @@
 public struct OnboardingActions {
-    public var requestPastePermission: () -> Void
+    public var requestPostEventAccess: () -> Void
     public var openAccessibilitySettings: () -> Void
-    public var hasPastePermission: () -> Bool
+    public var hasPostEventAccess: () -> Bool
     public var permissionGranted: () -> Void
     public var finish: () -> Void
-    public init(requestPastePermission: @escaping () -> Void = {}, openAccessibilitySettings: @escaping () -> Void = {},
-                hasPastePermission: @escaping () -> Bool = { true }, permissionGranted: @escaping () -> Void = {},
+    public init(requestPostEventAccess: @escaping () -> Void = {}, openAccessibilitySettings: @escaping () -> Void = {},
+                hasPostEventAccess: @escaping () -> Bool = { true }, permissionGranted: @escaping () -> Void = {},
                 finish: @escaping () -> Void = {}) {
-        self.requestPastePermission = requestPastePermission
+        self.requestPostEventAccess = requestPostEventAccess
         self.openAccessibilitySettings = openAccessibilitySettings
-        self.hasPastePermission = hasPastePermission
+        self.hasPostEventAccess = hasPostEventAccess
         self.permissionGranted = permissionGranted
         self.finish = finish
     }

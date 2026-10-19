@@ -53,7 +53,7 @@ import MurinookMacIntegration
                         if let queueID { services.queue.remove(queueID) }
                     case .accessibilityPermissionRequired:
                         errors.show("Allow Accessibility to paste into other apps")
-                        services.permission.requestAccessibilityPrompt()
+                        services.permission.requestPostEventAccess()
                     case .clipboardWriteFailed, .commandDispatchFailed, .destinationUnavailable:
                         errors.show("Could not paste item", detail: result.detail)
                     }

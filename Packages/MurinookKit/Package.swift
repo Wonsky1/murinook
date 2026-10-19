@@ -26,6 +26,6 @@ let package = Package(
         .target(name: "OnboardingFeature", dependencies: ["MurinookDomain", "MurinookUseCases", "MurinookDesignSystem"], resources: [.process("Resources")]),
         .testTarget(name: "MurinookPresentationTests", dependencies: ["MurinookPresentation"]),
         .testTarget(name: "MurinookCoreTests", dependencies: ["MurinookDomain", "MurinookUseCases", "MurinookStorage"]),
-        .testTarget(name: "MurinookMacTests", dependencies: ["MurinookMacIntegration", "MurinookDomain"])
+        .testTarget(name: "MurinookMacTests", dependencies: ["MurinookMacIntegration", "MurinookDomain", "SettingsFeature"])
     ]
 )

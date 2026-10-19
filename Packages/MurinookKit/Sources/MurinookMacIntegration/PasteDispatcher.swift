@@ -12,12 +12,19 @@ public struct PasteDispatchResult: Sendable, Equatable {
 
 @MainActor
 public final class PastePermission {
-    public init() {}
-    /// CGEvent posting uses Post Event access, a separate TCC permission from AX trust.
-    public var isAccessibilityTrusted: Bool { CGPreflightPostEventAccess() }
-    public func requestAccessibilityPrompt() {
-        _ = CGRequestPostEventAccess()
+    private let postEventAccessCheck: () -> Bool
+    private let postEventAccessRequest: () -> Void
+
+    public init(
+        postEventAccessCheck: @escaping () -> Bool = { CGPreflightPostEventAccess() },
+        postEventAccessRequest: @escaping () -> Void = { _ = CGRequestPostEventAccess() }
+    ) {
+        self.postEventAccessCheck = postEventAccessCheck
+        self.postEventAccessRequest = postEventAccessRequest
     }
+
+    public var hasPostEventAccess: Bool { postEventAccessCheck() }
+    public func requestPostEventAccess() { postEventAccessRequest() }
 }
 
 private final class WorkspaceActivationObserver: @unchecked Sendable {
@@ -65,7 +72,8 @@ public final class PasteDispatcher {
     }
 
     public func paste(_ content: [ClipboardItemSnapshot], plainTextOnly: Bool = false) async -> PasteDispatchResult {
-        guard permission.isAccessibilityTrusted else {
+        guard permission.hasPostEventAccess else {
+            permission.requestPostEventAccess()
             return PasteDispatchResult(status: .accessibilityPermissionRequired, clipboardChangeCount: nil, detail: nil)
         }
         if let frontmost = NSWorkspace.shared.frontmostApplication { rememberIfExternal(frontmost) }

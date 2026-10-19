@@ -20,7 +20,7 @@ public struct OnboardingView: View {
     public init(store: PreferencesStore, actions: OnboardingActions) {
         self.store = store
         self.actions = actions
-        _hasPastePermission = State(initialValue: actions.hasPastePermission())
+        _hasPastePermission = State(initialValue: actions.hasPostEventAccess())
     }
 
     public var body: some View {
@@ -46,7 +46,7 @@ public struct OnboardingView: View {
         .animation(MurinookMotion.settle(reduceMotion: reduceMotion), value: hasPastePermission)
         .onAppear {
             refreshPermission()
-            if !hasPastePermission { actions.requestPastePermission() }
+            if !hasPastePermission { actions.requestPostEventAccess() }
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { refreshPermission() }
@@ -83,13 +83,17 @@ public struct OnboardingView: View {
                 }.buttonStyle(MurinookButtonStyle(variant: .primary))
                 Button {
                     refreshPermission()
-                    if !hasPastePermission { actions.requestPastePermission() }
+                    if !hasPastePermission { actions.requestPostEventAccess() }
                 } label: {
                     Label { Text("onboarding.checkPermission", bundle: .module) } icon: { Image(systemName: "arrow.clockwise") }
                 }.buttonStyle(.link)
             }
             Spacer()
-            Label("onboarding.permissionRequired", systemImage: "lock.fill")
+            Label {
+                Text("onboarding.permissionRequired", bundle: .module)
+            } icon: {
+                Image(systemName: "lock.fill")
+            }
                 .font(.system(size: 11, weight: .medium)).foregroundStyle(MurinookPalette.muted)
         }
         .padding(38).frame(maxWidth: 540, maxHeight: .infinity, alignment: .leading)
@@ -97,7 +101,7 @@ public struct OnboardingView: View {
     }
 
     private func refreshPermission() {
-        hasPastePermission = actions.hasPastePermission()
+        hasPastePermission = actions.hasPostEventAccess()
     }
 
     private var header: some View {
@@ -160,7 +164,7 @@ public struct OnboardingView: View {
             Label { Text("onboarding.permissionExplanation", bundle: .module) } icon: { Image(systemName: "hand.raised.fill") }
                 .font(.system(size: 11)).foregroundStyle(MurinookPalette.muted).fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 10) {
-                Button { actions.requestPastePermission() } label: { Text("onboarding.enablePaste", bundle: .module) }.buttonStyle(MurinookButtonStyle(variant: .primary))
+                Button { actions.requestPostEventAccess() } label: { Text("onboarding.enablePaste", bundle: .module) }.buttonStyle(MurinookButtonStyle(variant: .primary))
                 Button { actions.openAccessibilitySettings() } label: { Text("onboarding.permissionSettings", bundle: .module) }.buttonStyle(.link)
             }
         }

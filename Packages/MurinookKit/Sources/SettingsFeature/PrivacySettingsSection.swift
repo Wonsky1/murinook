@@ -1,5 +1,4 @@
 import AppKit
-import ApplicationServices
 import MurinookDesignSystem
 import MurinookDomain
 import MurinookUseCases
@@ -8,7 +7,7 @@ import SwiftUI
 struct PrivacySettingsSection: View {
     let store: PreferencesStore; let actions: SettingsActions
     @Environment(\.scenePhase) private var scenePhase
-    @State private var permissionGranted = AXIsProcessTrusted()
+    @State private var permissionGranted = false
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 11) {
@@ -33,12 +32,14 @@ struct PrivacySettingsSection: View {
                     Circle().fill(permissionGranted ? MurinookPalette.accent : MurinookPalette.warm).frame(width: 7, height: 7)
                     Text(permissionGranted ? "settings.permissionGranted" : "settings.permissionMissing", bundle: .module).font(.system(size: 11)).foregroundStyle(MurinookPalette.muted)
                     Spacer(minLength: 0)
-                    Button("settings.requestPastePermission", action: actions.requestPastePermission).buttonStyle(.borderedProminent)
+                    Button("settings.requestPastePermission", action: actions.requestPostEventAccess).buttonStyle(.borderedProminent)
                     Button("settings.accessibilityHelp", action: actions.showAccessibilityHelp).buttonStyle(.link)
                 }
             }
         }
-        .onAppear { permissionGranted = AXIsProcessTrusted() }
-        .onChange(of: scenePhase) { _, phase in if phase == .active { permissionGranted = AXIsProcessTrusted() } }
+        .onAppear { refreshPermission() }
+        .onChange(of: scenePhase) { _, phase in if phase == .active { refreshPermission() } }
     }
+
+    private func refreshPermission() { permissionGranted = actions.hasPostEventAccess() }
 }

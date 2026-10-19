@@ -806,13 +806,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Murinook needs Post Event access to paste items into other apps. Setup and clipboard capture will continue after you grant access."
+            "value": "Murinook needs Accessibility access to send paste commands in other apps. Setup and clipboard capture will continue automatically as soon as macOS recognizes access."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Murinook потрібен дозвіл на надсилання подій, щоб вставляти елементи в інші програми. Налаштування та збір буфера обміну продовжаться після надання доступу."
+            "value": "Murinook потрібен дозвіл «Універсальний доступ», щоб надсилати команди вставлення в інші програми. Налаштування та збір буфера обміну продовжаться автоматично, щойно macOS розпізнає дозвіл."
           }
         }
       }
@@ -822,13 +822,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "In System Settings, open Privacy & Security → Accessibility and turn on Murinook. If it is not listed, add Murinook with the + button."
+            "value": "In System Settings, open Privacy & Security → Accessibility and turn on Murinook. If it is not listed, add Murinook with the + button. If it is already on but access is not recognized, remove Murinook, add the copy from Applications again, then quit and reopen Murinook."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "У системних параметрах відкрийте «Приватність і безпека» → «Універсальний доступ» і ввімкніть Murinook. Якщо програми немає у списку, додайте її кнопкою «+»."
+            "value": "У системних параметрах відкрийте «Приватність і безпека» → «Універсальний доступ» і ввімкніть Murinook. Якщо програми немає у списку, додайте її кнопкою «+». Якщо доступ уже ввімкнено, але програма його не розпізнає, видаліть Murinook, знову додайте копію з теки «Програми», а потім завершіть роботу й відкрийте Murinook знову."
           }
         }
       }

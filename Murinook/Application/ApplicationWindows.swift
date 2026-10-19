@@ -91,7 +91,7 @@ final class ApplicationWindows {
     }
 
     func showQuick() {
-        guard services.permission.isAccessibilityTrusted else { showOnboarding(); return }
+        guard services.permission.hasPostEventAccess else { showOnboarding(); return }
         self.quick.show(content: AnyView(FeatureEnvironment(preferences: self.services.preferences) {
             QuickAccessView(store: self.services.history, actions: QuickAccessActions(
                 paste: { [weak self] in self?.router.paste($0.contentID) },
@@ -104,7 +104,7 @@ final class ApplicationWindows {
     }
 
     func showLibrary() {
-        guard services.permission.isAccessibilityTrusted else { showOnboarding(); return }
+        guard services.permission.hasPostEventAccess else { showOnboarding(); return }
         if library == nil {
             library = FeatureWindowController(title: "Murinook", size: NSSize(width: 1120, height: 740),
                 minimumSize: NSSize(width: 840, height: 600), content: AnyView(FeatureEnvironment(preferences: self.services.preferences) {
@@ -127,7 +127,7 @@ final class ApplicationWindows {
     }
 
     func showQueue() {
-        guard services.permission.isAccessibilityTrusted else { showOnboarding(); return }
+        guard services.permission.hasPostEventAccess else { showOnboarding(); return }
         if queue == nil {
             queue = FeatureWindowController(title: localized("Paste queue"), size: NSSize(width: 590, height: 480),
                 minimumSize: NSSize(width: 590, height: 470), content: AnyView(FeatureEnvironment(preferences: self.services.preferences) {
@@ -143,7 +143,7 @@ final class ApplicationWindows {
     }
 
     func showSettings() {
-        guard services.permission.isAccessibilityTrusted else { showOnboarding(); return }
+        guard services.permission.hasPostEventAccess else { showOnboarding(); return }
         if settings == nil {
             settings = FeatureWindowController(title: localized("Settings"), size: NSSize(width: 920, height: 630),
                 minimumSize: NSSize(width: 780, height: 560), content: settingsView, foreground: foreground, autosaveName: "Murinook.Settings")
@@ -157,7 +157,7 @@ final class ApplicationWindows {
     }
 
     func showUpdateSettings() {
-        guard services.permission.isAccessibilityTrusted else { showOnboarding(); return }
+        guard services.permission.hasPostEventAccess else { showOnboarding(); return }
         settingsNavigation.selection = .updates
         showSettings()
     }
@@ -168,7 +168,8 @@ final class ApplicationWindows {
                 chooseExcludedApps: self.effects.chooseExcludedApps, recordShortcut: self.effects.record,
                 resetShortcut: self.effects.resetShortcut, disableShortcut: self.effects.disableShortcut,
                 showAccessibilityHelp: self.effects.openAccessibilitySettings,
-                requestPastePermission: self.services.permission.requestAccessibilityPrompt,
+                requestPostEventAccess: self.services.permission.requestPostEventAccess,
+                hasPostEventAccess: { self.services.permission.hasPostEventAccess },
                 openLoginItemsSettings: self.effects.openLoginSettings,
                 setDockIconVisible: self.effects.setDockVisible, setLaunchAtLogin: self.effects.setLaunchAtLogin,
                 clearUnpinnedHistory: { Task { await self.services.history.clearUnpinned() } },
@@ -186,9 +187,9 @@ final class ApplicationWindows {
         onboarding = FeatureWindowController(title: "Murinook", size: NSSize(width: 760, height: 550),
             minimumSize: NSSize(width: 760, height: 550), content: AnyView(FeatureEnvironment(preferences: self.services.preferences) {
                 OnboardingView(store: self.services.preferences, actions: OnboardingActions(
-                    requestPastePermission: self.services.permission.requestAccessibilityPrompt,
+                    requestPostEventAccess: self.services.permission.requestPostEventAccess,
                     openAccessibilitySettings: self.effects.openAccessibilitySettings,
-                    hasPastePermission: { [weak self] in self?.services.permission.isAccessibilityTrusted ?? false },
+                    hasPostEventAccess: { [weak self] in self?.services.permission.hasPostEventAccess ?? false },
                     permissionGranted: { [weak self] in self?.permissionGatePassed() },
                     finish: { [weak self] in self?.finishOnboarding() }))
             }), foreground: foreground, onClose: { [weak self] in self?.finishOnboarding() })
@@ -197,13 +198,13 @@ final class ApplicationWindows {
 
     func showLaunchExperience() {
         let needsOnboarding = presentation.launch()
-        guard services.permission.isAccessibilityTrusted else { showOnboarding(); return }
+        guard services.permission.hasPostEventAccess else { showOnboarding(); return }
         showLibrary()
         if needsOnboarding { showOnboarding() }
     }
 
     func reopen() {
-        guard services.permission.isAccessibilityTrusted else { showOnboarding(); return }
+        guard services.permission.hasPostEventAccess else { showOnboarding(); return }
         showLibrary()
         if presentation.onboardingVisible { showOnboarding() }
     }
@@ -215,7 +216,7 @@ final class ApplicationWindows {
     }
 
     private func finishOnboarding() {
-        guard services.permission.isAccessibilityTrusted else { onboarding?.show(); return }
+        guard services.permission.hasPostEventAccess else { onboarding?.show(); return }
         presentation.completeOnboarding()
         defaults.set(true, forKey: "onboardingCompleted")
         onboarding?.hide()

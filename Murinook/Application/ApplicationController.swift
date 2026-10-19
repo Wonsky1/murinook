@@ -49,7 +49,7 @@ import MurinookDomain
         effects.onShortcut = { [weak self] in self?.perform($0) }
         services.dragMonitor.onCandidate = { [weak self] _ in
             guard let self else { return }
-            guard self.services.permission.isAccessibilityTrusted else { self.windows.showOnboarding(); return }
+            guard self.services.permission.hasPostEventAccess else { self.windows.showOnboarding(); return }
             self.services.diagnostics.event("shelf.auto_show.policy", fields: ["enabled": String(self.services.preferences.value.autoShowShelf)])
             guard self.services.preferences.value.autoShowShelf else { return }
             self.windows.shelf.externalDragStarted()
@@ -83,7 +83,7 @@ import MurinookDomain
         windows.start()
         effects.start()
         visualBackfill.start()
-        if services.permission.isAccessibilityTrusted {
+        if services.permission.hasPostEventAccess {
             capture.start()
             services.dragMonitor.start()
         }
@@ -97,7 +97,7 @@ import MurinookDomain
     func stop() { windows.stop(); updates.stop(); router.stop(); maintenance.stop(); visualBackfill.stop(); capture.stop(); services.dragMonitor.stop(); services.bookmarks.releaseAllAccess() }
 
     func perform(_ action: ShortcutAction) {
-        guard services.permission.isAccessibilityTrusted else { windows.showOnboarding(); return }
+        guard services.permission.hasPostEventAccess else { windows.showOnboarding(); return }
         switch action {
         case .quickAccess: windows.showQuick()
         case .library: windows.showLibrary()
