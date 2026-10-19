@@ -2,7 +2,7 @@
 
 A native macOS clipboard manager and temporary drag-and-drop shelf. Keep recent copies within reach, organize what matters, and carry files between apps from a small panel at the edge of your screen.
 
-**macOS 15+ · Apple silicon & Intel · English & Ukrainian**
+**macOS 14+ · Apple silicon & Intel · English & Ukrainian**
 
 ## Download
 

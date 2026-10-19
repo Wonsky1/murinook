@@ -70,7 +70,7 @@ jobs:
 
           ## Installation
 
-          macOS 15 or later · Apple silicon and Intel.
+          macOS 14 or later · Apple silicon and Intel.
 
           Open the DMG, quit Murinook, and drag it to Applications, replacing the previous copy. Your existing history and preferences remain in their separate storage.
 
