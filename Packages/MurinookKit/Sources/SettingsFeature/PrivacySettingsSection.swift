@@ -32,7 +32,9 @@ struct PrivacySettingsSection: View {
                     Circle().fill(permissionGranted ? MurinookPalette.accent : MurinookPalette.warm).frame(width: 7, height: 7)
                     Text(permissionGranted ? "settings.permissionGranted" : "settings.permissionMissing", bundle: .module).font(.system(size: 11)).foregroundStyle(MurinookPalette.muted)
                     Spacer(minLength: 0)
-                    Button("settings.requestPastePermission", action: actions.requestPostEventAccess).buttonStyle(.borderedProminent)
+                    Button("settings.requestPastePermission") {
+                        permissionGranted = actions.requestPostEventAccess() || actions.hasPostEventAccess()
+                    }.buttonStyle(.borderedProminent)
                     Button("settings.accessibilityHelp", action: actions.showAccessibilityHelp).buttonStyle(.link)
                 }
             }

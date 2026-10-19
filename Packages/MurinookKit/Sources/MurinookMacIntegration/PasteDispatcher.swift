@@ -13,18 +13,18 @@ public struct PasteDispatchResult: Sendable, Equatable {
 @MainActor
 public final class PastePermission {
     private let postEventAccessCheck: () -> Bool
-    private let postEventAccessRequest: () -> Void
+    private let postEventAccessRequest: () -> Bool
 
     public init(
         postEventAccessCheck: @escaping () -> Bool = { CGPreflightPostEventAccess() },
-        postEventAccessRequest: @escaping () -> Void = { _ = CGRequestPostEventAccess() }
+        postEventAccessRequest: @escaping () -> Bool = { CGRequestPostEventAccess() }
     ) {
         self.postEventAccessCheck = postEventAccessCheck
         self.postEventAccessRequest = postEventAccessRequest
     }
 
     public var hasPostEventAccess: Bool { postEventAccessCheck() }
-    public func requestPostEventAccess() { postEventAccessRequest() }
+    public func requestPostEventAccess() -> Bool { postEventAccessRequest() }
 }
 
 private final class WorkspaceActivationObserver: @unchecked Sendable {
@@ -73,7 +73,7 @@ public final class PasteDispatcher {
 
     public func paste(_ content: [ClipboardItemSnapshot], plainTextOnly: Bool = false) async -> PasteDispatchResult {
         guard permission.hasPostEventAccess else {
-            permission.requestPostEventAccess()
+            _ = permission.requestPostEventAccess()
             return PasteDispatchResult(status: .accessibilityPermissionRequired, clipboardChangeCount: nil, detail: nil)
         }
         if let frontmost = NSWorkspace.shared.frontmostApplication { rememberIfExternal(frontmost) }

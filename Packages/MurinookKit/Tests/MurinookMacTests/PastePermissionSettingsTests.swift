@@ -20,14 +20,17 @@ final class PastePermissionSettingsTests: XCTestCase {
     }
 
     @MainActor
-    func testRequestInvokesPostEventPermissionPrompt() {
+    func testRequestReturnsPostEventPermissionGrantResult() {
         var promptCount = 0
         let permission = PastePermission(
             postEventAccessCheck: { false },
-            postEventAccessRequest: { promptCount += 1 }
+            postEventAccessRequest: {
+                promptCount += 1
+                return true
+            }
         )
 
-        permission.requestPostEventAccess()
+        XCTAssertTrue(permission.requestPostEventAccess())
 
         XCTAssertEqual(promptCount, 1)
     }

@@ -6,7 +6,7 @@ public struct SettingsActions {
     public var resetShortcut: (ShortcutAction) -> Void
     public var disableShortcut: (ShortcutAction) -> Void
     public var showAccessibilityHelp: () -> Void
-    public var requestPostEventAccess: () -> Void
+    public var requestPostEventAccess: () -> Bool
     public var hasPostEventAccess: () -> Bool
     public var openLoginItemsSettings: () -> Void
     public var setDockIconVisible: (Bool) -> Void
@@ -22,7 +22,7 @@ public struct SettingsActions {
     public init(chooseExcludedApps: @escaping () -> Void = {}, recordShortcut: @escaping (ShortcutAction) -> Void = { _ in },
                 resetShortcut: @escaping (ShortcutAction) -> Void = { _ in },
                 disableShortcut: @escaping (ShortcutAction) -> Void = { _ in },
-                showAccessibilityHelp: @escaping () -> Void = {}, requestPostEventAccess: @escaping () -> Void = {},
+                showAccessibilityHelp: @escaping () -> Void = {}, requestPostEventAccess: @escaping () -> Bool = { false },
                 hasPostEventAccess: @escaping () -> Bool = { false },
                 openLoginItemsSettings: @escaping () -> Void = {}, setDockIconVisible: @escaping (Bool) -> Void = { _ in },
                 setLaunchAtLogin: @escaping (Bool) -> Void = { _ in },

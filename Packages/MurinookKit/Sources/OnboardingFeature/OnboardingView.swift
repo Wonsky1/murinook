@@ -46,7 +46,7 @@ public struct OnboardingView: View {
         .animation(MurinookMotion.settle(reduceMotion: reduceMotion), value: hasPastePermission)
         .onAppear {
             refreshPermission()
-            if !hasPastePermission { actions.requestPostEventAccess() }
+            if !hasPastePermission { requestAndRefreshPermission() }
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { refreshPermission() }
@@ -82,8 +82,7 @@ public struct OnboardingView: View {
                     Text("onboarding.permissionSettings", bundle: .module)
                 }.buttonStyle(MurinookButtonStyle(variant: .primary))
                 Button {
-                    refreshPermission()
-                    if !hasPastePermission { actions.requestPostEventAccess() }
+                    requestAndRefreshPermission()
                 } label: {
                     Label { Text("onboarding.checkPermission", bundle: .module) } icon: { Image(systemName: "arrow.clockwise") }
                 }.buttonStyle(.link)
@@ -102,6 +101,11 @@ public struct OnboardingView: View {
 
     private func refreshPermission() {
         hasPastePermission = actions.hasPostEventAccess()
+    }
+
+    private func requestAndRefreshPermission() {
+        let requestGranted = actions.requestPostEventAccess()
+        hasPastePermission = requestGranted || actions.hasPostEventAccess()
     }
 
     private var header: some View {
@@ -164,7 +168,7 @@ public struct OnboardingView: View {
             Label { Text("onboarding.permissionExplanation", bundle: .module) } icon: { Image(systemName: "hand.raised.fill") }
                 .font(.system(size: 11)).foregroundStyle(MurinookPalette.muted).fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 10) {
-                Button { actions.requestPostEventAccess() } label: { Text("onboarding.enablePaste", bundle: .module) }.buttonStyle(MurinookButtonStyle(variant: .primary))
+                Button { requestAndRefreshPermission() } label: { Text("onboarding.enablePaste", bundle: .module) }.buttonStyle(MurinookButtonStyle(variant: .primary))
                 Button { actions.openAccessibilitySettings() } label: { Text("onboarding.permissionSettings", bundle: .module) }.buttonStyle(.link)
             }
         }
