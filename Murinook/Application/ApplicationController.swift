@@ -39,12 +39,17 @@ import MurinookDomain
             updates: updates, defaults: defaults)
         capture = ClipboardCaptureController(services: services)
         visualBackfill = ContentVisualBackfill(services: services)
+        windows.onPermissionGatePassed = { [weak self] in
+            self?.capture.start()
+            self?.services.dragMonitor.start()
+        }
         router.beforePaste = { [weak self] in self?.windows.quick.hide() }
         effects.onPlacement = { [weak self] in self?.windows.shelf.updatePlacement(side: $0, offset: $1) }
         effects.onLanguageChange = { [weak self] in self?.windows.updateLanguage($0) }
         effects.onShortcut = { [weak self] in self?.perform($0) }
         services.dragMonitor.onCandidate = { [weak self] _ in
             guard let self else { return }
+            guard self.services.permission.isAccessibilityTrusted else { self.windows.showOnboarding(); return }
             self.services.diagnostics.event("shelf.auto_show.policy", fields: ["enabled": String(self.services.preferences.value.autoShowShelf)])
             guard self.services.preferences.value.autoShowShelf else { return }
             self.windows.shelf.externalDragStarted()
@@ -77,9 +82,11 @@ import MurinookDomain
         maintenance.start()
         windows.start()
         effects.start()
-        capture.start()
         visualBackfill.start()
-        services.dragMonitor.start()
+        if services.permission.isAccessibilityTrusted {
+            capture.start()
+            services.dragMonitor.start()
+        }
         startupProblem = nil
         isReady = true
         updates.start()
@@ -90,6 +97,7 @@ import MurinookDomain
     func stop() { windows.stop(); updates.stop(); router.stop(); maintenance.stop(); visualBackfill.stop(); capture.stop(); services.dragMonitor.stop(); services.bookmarks.releaseAllAccess() }
 
     func perform(_ action: ShortcutAction) {
+        guard services.permission.isAccessibilityTrusted else { windows.showOnboarding(); return }
         switch action {
         case .quickAccess: windows.showQuick()
         case .library: windows.showLibrary()

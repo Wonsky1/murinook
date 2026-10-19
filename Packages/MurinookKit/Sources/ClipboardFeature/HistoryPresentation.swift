@@ -106,7 +106,7 @@ struct HistoryPresentation: View {
                 Text("\(ordinal?(clip) ?? rank)").monospacedDigit().frame(width: 22)
             }
             .font(.system(size: 11)).foregroundStyle(MurinookPalette.soft).padding(.horizontal, 9).frame(minHeight: 62)
-            .background(selectedIDs.contains(clip.id) ? MurinookPalette.accentSoft : Color.clear, in: RoundedRectangle(cornerRadius: 9))
+            .modifier(HistoryHoverBackground(isSelected: selectedIDs.contains(clip.id), shape: RoundedRectangle(cornerRadius: 9), selectedColor: MurinookPalette.accentSoft, hoverColor: MurinookPalette.surface2))
             .overlay(alignment: .bottom) { Rectangle().fill(MurinookPalette.border.opacity(0.75)).frame(height: 1) }.contentShape(Rectangle())
         }
         .buttonStyle(.plain).animation(MurinookMotion.feedback(reduceMotion: reduceMotion), value: selectedIDs).modifier(HistorySelectionAccessibility(selected: selectedIDs.contains(clip.id)))
@@ -130,7 +130,7 @@ struct HistoryPresentation: View {
                 }.font(.system(size: 11)).foregroundStyle(MurinookPalette.soft)
             }
             .padding(11).frame(width: strip ? 205 : nil).frame(maxWidth: strip ? nil : .infinity, minHeight: strip ? 150 : 126, alignment: .topLeading)
-            .background(selectedIDs.contains(clip.id) ? MurinookPalette.accentSoft : MurinookPalette.surface, in: RoundedRectangle(cornerRadius: 12))
+            .modifier(HistoryHoverBackground(isSelected: selectedIDs.contains(clip.id), shape: RoundedRectangle(cornerRadius: 12), selectedColor: MurinookPalette.accentSoft, hoverColor: MurinookPalette.surface2, normalColor: MurinookPalette.surface))
             .overlay(RoundedRectangle(cornerRadius: 12).stroke(selectedIDs.contains(clip.id) ? MurinookPalette.accent.opacity(0.55) : MurinookPalette.border, lineWidth: 1)).contentShape(RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(.plain).animation(MurinookMotion.feedback(reduceMotion: reduceMotion), value: selectedIDs).modifier(HistorySelectionAccessibility(selected: selectedIDs.contains(clip.id)))
@@ -153,4 +153,19 @@ struct HistoryPresentation: View {
 private struct HistorySelectionAccessibility: ViewModifier {
     let selected: Bool
     func body(content: Content) -> some View { content.accessibilityAddTraits(selected ? .isSelected : []) }
+}
+
+private struct HistoryHoverBackground<Shape: InsettableShape>: ViewModifier {
+    let isSelected: Bool
+    let shape: Shape
+    let selectedColor: Color
+    let hoverColor: Color
+    var normalColor: Color = .clear
+    @State private var isHovered = false
+
+    func body(content: Content) -> some View {
+        content
+            .background(isSelected ? selectedColor : (isHovered ? hoverColor : normalColor), in: shape)
+            .onHover { isHovered = $0 }
+    }
 }

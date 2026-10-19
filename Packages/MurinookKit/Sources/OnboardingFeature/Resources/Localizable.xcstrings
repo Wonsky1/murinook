@@ -784,6 +784,86 @@
           }
         }
       }
+    },
+    "onboarding.requiredPermissionTitle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow Murinook to send paste commands"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дозвольте Murinook надсилати команди вставлення"
+          }
+        }
+      }
+    },
+    "onboarding.requiredPermissionMessage": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Murinook needs Post Event access to paste items into other apps. Setup and clipboard capture will continue after you grant access."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Murinook потрібен дозвіл на надсилання подій, щоб вставляти елементи в інші програми. Налаштування та збір буфера обміну продовжаться після надання доступу."
+          }
+        }
+      }
+    },
+    "onboarding.requiredPermissionInstructions": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In System Settings, open Privacy & Security → Accessibility and turn on Murinook. If it is not listed, add Murinook with the + button."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "У системних параметрах відкрийте «Приватність і безпека» → «Універсальний доступ» і ввімкніть Murinook. Якщо програми немає у списку, додайте її кнопкою «+»."
+          }
+        }
+      }
+    },
+    "onboarding.checkPermission": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check access"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перевірити доступ"
+          }
+        }
+      }
+    },
+    "onboarding.permissionRequired": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grant this permission to continue setup."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Надайте цей дозвіл, щоб продовжити налаштування."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

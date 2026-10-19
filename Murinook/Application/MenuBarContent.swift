@@ -46,7 +46,7 @@ struct MenuBarContent: View {
                         controller.services.preferences.update { $0.captureEnabled.toggle() }
                     }
                     row("Settings", symbol: "gearshape", action: controller.windows.showSettings)
-                }.disabled(!controller.isReady)
+                }.disabled(!controller.isReady || !controller.services.permission.isAccessibilityTrusted)
                 separator.padding(.vertical, 5)
                 if case .available(let release) = controller.updates.store.state {
                     HStack(spacing: 8) {

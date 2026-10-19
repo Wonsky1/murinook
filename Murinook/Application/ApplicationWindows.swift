@@ -30,6 +30,7 @@ final class ApplicationWindows {
     private var queue: FeatureWindowController?
     private var onboarding: FeatureWindowController?
     private var backgroundExplanation: BackgroundExplanationController?
+    var onPermissionGatePassed: (() -> Void)?
 
     init(services: ApplicationServices, router: ContentActionRouter,
          effects: PreferencesEffectsController, transfers: ShelfTransferController, updates: AppUpdateController,
@@ -90,6 +91,7 @@ final class ApplicationWindows {
     }
 
     func showQuick() {
+        guard services.permission.isAccessibilityTrusted else { showOnboarding(); return }
         self.quick.show(content: AnyView(FeatureEnvironment(preferences: self.services.preferences) {
             QuickAccessView(store: self.services.history, actions: QuickAccessActions(
                 paste: { [weak self] in self?.router.paste($0.contentID) },
@@ -102,6 +104,7 @@ final class ApplicationWindows {
     }
 
     func showLibrary() {
+        guard services.permission.isAccessibilityTrusted else { showOnboarding(); return }
         if library == nil {
             library = FeatureWindowController(title: "Murinook", size: NSSize(width: 1120, height: 740),
                 minimumSize: NSSize(width: 840, height: 600), content: AnyView(FeatureEnvironment(preferences: self.services.preferences) {
@@ -124,6 +127,7 @@ final class ApplicationWindows {
     }
 
     func showQueue() {
+        guard services.permission.isAccessibilityTrusted else { showOnboarding(); return }
         if queue == nil {
             queue = FeatureWindowController(title: localized("Paste queue"), size: NSSize(width: 590, height: 480),
                 minimumSize: NSSize(width: 590, height: 470), content: AnyView(FeatureEnvironment(preferences: self.services.preferences) {
@@ -139,6 +143,7 @@ final class ApplicationWindows {
     }
 
     func showSettings() {
+        guard services.permission.isAccessibilityTrusted else { showOnboarding(); return }
         if settings == nil {
             settings = FeatureWindowController(title: localized("Settings"), size: NSSize(width: 920, height: 630),
                 minimumSize: NSSize(width: 780, height: 560), content: settingsView, foreground: foreground, autosaveName: "Murinook.Settings")
@@ -152,6 +157,7 @@ final class ApplicationWindows {
     }
 
     func showUpdateSettings() {
+        guard services.permission.isAccessibilityTrusted else { showOnboarding(); return }
         settingsNavigation.selection = .updates
         showSettings()
     }
@@ -182,6 +188,8 @@ final class ApplicationWindows {
                 OnboardingView(store: self.services.preferences, actions: OnboardingActions(
                     requestPastePermission: self.services.permission.requestAccessibilityPrompt,
                     openAccessibilitySettings: self.effects.openAccessibilitySettings,
+                    hasPastePermission: { [weak self] in self?.services.permission.isAccessibilityTrusted ?? false },
+                    permissionGranted: { [weak self] in self?.permissionGatePassed() },
                     finish: { [weak self] in self?.finishOnboarding() }))
             }), foreground: foreground, onClose: { [weak self] in self?.finishOnboarding() })
         onboarding?.show()
@@ -189,11 +197,13 @@ final class ApplicationWindows {
 
     func showLaunchExperience() {
         let needsOnboarding = presentation.launch()
+        guard services.permission.isAccessibilityTrusted else { showOnboarding(); return }
         showLibrary()
         if needsOnboarding { showOnboarding() }
     }
 
     func reopen() {
+        guard services.permission.isAccessibilityTrusted else { showOnboarding(); return }
         showLibrary()
         if presentation.onboardingVisible { showOnboarding() }
     }
@@ -205,10 +215,19 @@ final class ApplicationWindows {
     }
 
     private func finishOnboarding() {
+        guard services.permission.isAccessibilityTrusted else { onboarding?.show(); return }
         presentation.completeOnboarding()
         defaults.set(true, forKey: "onboardingCompleted")
         onboarding?.hide()
         showLibrary()
+    }
+
+    private func permissionGatePassed() {
+        onPermissionGatePassed?()
+        if defaults.bool(forKey: "onboardingCompleted") {
+            onboarding?.hide()
+            showLibrary()
+        }
     }
 
     private func libraryClosed() {

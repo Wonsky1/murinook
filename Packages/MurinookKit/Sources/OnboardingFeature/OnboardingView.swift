@@ -13,24 +13,91 @@ public struct OnboardingView: View {
     private let store: PreferencesStore
     private let actions: OnboardingActions
     @State private var step: OnboardingStep = .welcome
+    @State private var hasPastePermission: Bool
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    public init(store: PreferencesStore, actions: OnboardingActions) { self.store = store; self.actions = actions }
+    public init(store: PreferencesStore, actions: OnboardingActions) {
+        self.store = store
+        self.actions = actions
+        _hasPastePermission = State(initialValue: actions.hasPastePermission())
+    }
 
     public var body: some View {
-        VStack(spacing: 0) {
-            header
-            progress
-            HStack(alignment: .center, spacing: 30) {
-                copyColumn.frame(maxWidth: .infinity, alignment: .leading)
-                onboardingIllustration.frame(width: 225, height: 218).accessibilityHidden(true)
+        Group {
+            if hasPastePermission {
+                VStack(spacing: 0) {
+                    header
+                    progress
+                    HStack(alignment: .center, spacing: 30) {
+                        copyColumn.frame(maxWidth: .infinity, alignment: .leading)
+                        onboardingIllustration.frame(width: 225, height: 218).accessibilityHidden(true)
+                    }
+                    .padding(.horizontal, 34).padding(.vertical, 18).frame(maxHeight: .infinity)
+                    footer
+                }
+            } else {
+                permissionGate
             }
-            .padding(.horizontal, 34).padding(.vertical, 18).frame(maxHeight: .infinity)
-            footer
         }
         .frame(minWidth: 690, minHeight: 520).frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(MurinookPalette.window)
         .animation(MurinookMotion.settle(reduceMotion: reduceMotion), value: step)
+        .animation(MurinookMotion.settle(reduceMotion: reduceMotion), value: hasPastePermission)
+        .onAppear {
+            refreshPermission()
+            if !hasPastePermission { actions.requestPastePermission() }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { refreshPermission() }
+        }
+        .task {
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(1))
+                refreshPermission()
+            }
+        }
+        .onChange(of: hasPastePermission) { _, granted in
+            if granted { actions.permissionGranted() }
+        }
+    }
+
+    private var permissionGate: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(spacing: 8) {
+                MurinookBrandMark(size: 24)
+                Text("onboarding.product", bundle: .module).font(.system(size: 13, weight: .semibold))
+            }.foregroundStyle(MurinookPalette.muted)
+            Spacer()
+            Image(systemName: "hand.raised.fill").font(.system(size: 30)).foregroundStyle(MurinookPalette.accent)
+            Text("onboarding.requiredPermissionTitle", bundle: .module)
+                .font(.system(size: 26, weight: .semibold, design: .rounded)).tracking(-0.7)
+            Text("onboarding.requiredPermissionMessage", bundle: .module)
+                .font(.system(size: 13)).lineSpacing(3).foregroundStyle(MurinookPalette.muted)
+                .fixedSize(horizontal: false, vertical: true)
+            Text("onboarding.requiredPermissionInstructions", bundle: .module)
+                .font(.system(size: 12, weight: .medium)).fixedSize(horizontal: false, vertical: true)
+            HStack(spacing: 12) {
+                Button { actions.openAccessibilitySettings() } label: {
+                    Text("onboarding.permissionSettings", bundle: .module)
+                }.buttonStyle(MurinookButtonStyle(variant: .primary))
+                Button {
+                    refreshPermission()
+                    if !hasPastePermission { actions.requestPastePermission() }
+                } label: {
+                    Label { Text("onboarding.checkPermission", bundle: .module) } icon: { Image(systemName: "arrow.clockwise") }
+                }.buttonStyle(.link)
+            }
+            Spacer()
+            Label("onboarding.permissionRequired", systemImage: "lock.fill")
+                .font(.system(size: 11, weight: .medium)).foregroundStyle(MurinookPalette.muted)
+        }
+        .padding(38).frame(maxWidth: 540, maxHeight: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func refreshPermission() {
+        hasPastePermission = actions.hasPastePermission()
     }
 
     private var header: some View {
