@@ -20,12 +20,22 @@ final class AppUpdateController {
         checkManually()
     }
 
-    func checkManually() { Task { [store] in await store.check() } }
+    func checkManually() {
+        Task { [store, preferences] in
+            await store.check(includingPrereleases: preferences.value.includeBetaUpdates)
+        }
+    }
     func stop() { store.cancel() }
 
     func setAutomaticChecks(_ enabled: Bool) {
         guard preferences.update({ $0.automaticallyChecksForUpdates = enabled }) else { return }
         if enabled { start() } else { stop() }
+    }
+
+    func setIncludeBetaUpdates(_ enabled: Bool) {
+        guard preferences.update({ $0.includeBetaUpdates = enabled }) else { return }
+        store.cancel()
+        checkManually()
     }
 
     func openPage(_ release: AppRelease) { NSWorkspace.shared.open(release.pageURL) }

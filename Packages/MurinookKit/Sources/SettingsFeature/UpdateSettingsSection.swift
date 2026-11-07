@@ -24,6 +24,14 @@ struct UpdateSettingsSection: View {
                     Text("settings.automaticUpdates", bundle: .module)
                 }.labelsHidden()
             }
+            SettingsRow(key: "settings.betaUpdates", detail: "settings.betaUpdatesDetail", icon: "testtube.2") {
+                Toggle(isOn: Binding(get: { preferences.value.includeBetaUpdates }, set: actions.setIncludeBetaUpdates)) {
+                    Text("settings.betaUpdates", bundle: .module)
+                }
+                .toggleStyle(.checkbox)
+                .labelsHidden()
+                .accessibilityLabel(Text("settings.betaUpdates", bundle: .module))
+            }
             VStack(alignment: .leading, spacing: 14) {
                 HStack(spacing: 10) {
                     Image(systemName: statusSymbol).foregroundStyle(MurinookPalette.accent)
@@ -63,7 +71,7 @@ struct UpdateSettingsSection: View {
         case .checking: Text("settings.checkingUpdates", bundle: .module)
         case .available(let release):
             Text("settings.updateAvailable \(release.version.description)", bundle: .module)
-        case .upToDate: Text("settings.noNewStableUpdate", bundle: .module)
+        case .upToDate: Text(preferences.value.includeBetaUpdates ? "settings.noNewUpdate" : "settings.noNewStableUpdate", bundle: .module)
         case .failed: Text("settings.updateCheckFailed", bundle: .module)
         default: Text("settings.updatesReady", bundle: .module)
         }

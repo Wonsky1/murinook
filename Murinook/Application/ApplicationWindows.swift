@@ -184,7 +184,8 @@ final class ApplicationWindows {
                 openUpdatePage: self.updates.openPage, downloadUpdate: self.updates.download,
                 shortcutDescription: { $0.map(ShortcutDescriptionFormatter.string(for:)) ?? "—" },
                 isShortcutUnavailable: self.effects.isShortcutUnavailable,
-                showWelcome: self.replayWelcome),
+                showWelcome: self.replayWelcome,
+                setIncludeBetaUpdates: self.updates.setIncludeBetaUpdates),
                 navigation: self.settingsNavigation, updates: self.updates.store, currentVersion: self.updates.versionLabel)
         })
     }

@@ -13,14 +13,35 @@ public struct GitHubReleaseSource: ReleaseSource {
         self.session = session
     }
 
-    public func latestStableRelease() async throws -> AppRelease? {
+    public func latestRelease(includingPrereleases: Bool) async throws -> AppRelease? {
         guard Self.validPathPart(owner), Self.validPathPart(repository) else { throw ReleaseSourceError.invalidConfiguration }
+        // Keep GitHub's latest stable eligible even if a long sequence of beta
+        // releases has pushed it beyond the bounded list of recent releases.
+        let stable = try await stableRelease()
+        guard includingPrereleases else { return stable }
+        let payloads: [Payload] = try await fetch(suffix: "", queryItems: [URLQueryItem(name: "per_page", value: "100")]) ?? []
+        let candidate = payloads.compactMap { payload -> (Payload, ReleaseVersion)? in
+            guard !payload.draft, let version = ReleaseVersion(payload.tagName) else { return nil }
+            return (payload, version)
+        }.max { $0.1 < $1.1 }
+        let preview = try candidate.map { try release(from: $0.0, version: $0.1) }
+        return [stable, preview].compactMap { $0 }.max { $0.version < $1.version }
+    }
+
+    private func stableRelease() async throws -> AppRelease? {
+        guard let payload: Payload = try await fetch(suffix: "/latest"), !payload.draft, !payload.prerelease,
+              let version = ReleaseVersion(payload.tagName), !version.isPrerelease else { return nil }
+        return try release(from: payload, version: version)
+    }
+
+    private func fetch<Value: Decodable>(suffix: String, queryItems: [URLQueryItem] = []) async throws -> Value? {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.github.com"
-        components.path = "/repos/\(owner)/\(repository)/releases/latest"
+        components.path = "/repos/\(owner)/\(repository)/releases" + suffix
+        if !queryItems.isEmpty { components.queryItems = queryItems }
         guard let url = components.url else { throw ReleaseSourceError.invalidConfiguration }
-        var request = URLRequest(url: url, timeoutInterval: 10)
+        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         request.setValue("Murinook", forHTTPHeaderField: "User-Agent")
         let (data, response) = try await session.data(for: request)
@@ -28,11 +49,11 @@ public struct GitHubReleaseSource: ReleaseSource {
         if http.statusCode == 404 { return nil }
         guard (200..<300).contains(http.statusCode) else { throw ReleaseSourceError.httpStatus(http.statusCode) }
         guard data.count <= 1_048_576 else { throw ReleaseSourceError.responseTooLarge }
-        let payload: Payload
-        do { payload = try JSONDecoder().decode(Payload.self, from: data) }
+        do { return try JSONDecoder().decode(Value.self, from: data) }
         catch { throw ReleaseSourceError.invalidResponse }
-        guard !payload.draft, !payload.prerelease else { return nil }
-        guard let version = ReleaseVersion(payload.tagName), !version.isPrerelease else { return nil }
+    }
+
+    private func release(from payload: Payload, version: ReleaseVersion) throws -> AppRelease {
         guard let page = Self.httpsURL(payload.htmlURL), Self.isGitHubPage(page, owner: owner, repository: repository, tag: payload.tagName) else {
             throw ReleaseSourceError.invalidLink
         }

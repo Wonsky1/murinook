@@ -22,6 +22,7 @@ public struct SettingsActions {
     public var downloadUpdate: (AppRelease) -> Void
     public var isShortcutUnavailable: (ShortcutAction) -> Bool
     public var showWelcome: () -> Void
+    public var setIncludeBetaUpdates: (Bool) -> Void
 
     public init(chooseExcludedApps: @escaping () -> Void = {}, recordShortcut: @escaping (ShortcutAction) -> Void = { _ in },
                 resetShortcut: @escaping (ShortcutAction) -> Void = { _ in },
@@ -48,7 +49,8 @@ public struct SettingsActions {
                     let keys: [UInt32: String] = [0: "A", 1: "S", 6: "Z", 9: "V", 11: "B"]
                     return result + (keys[combination.keyCode] ?? "Key \(combination.keyCode)")
                 }, isShortcutUnavailable: @escaping (ShortcutAction) -> Bool = { _ in false },
-                showWelcome: @escaping () -> Void = {}) {
+                showWelcome: @escaping () -> Void = {},
+                setIncludeBetaUpdates: @escaping (Bool) -> Void = { _ in }) {
         self.chooseExcludedApps = chooseExcludedApps; self.recordShortcut = recordShortcut
         self.resetShortcut = resetShortcut; self.disableShortcut = disableShortcut
         self.showAccessibilityHelp = showAccessibilityHelp; self.requestPostEventAccess = requestPostEventAccess
@@ -66,5 +68,6 @@ public struct SettingsActions {
         self.downloadUpdate = downloadUpdate
         self.isShortcutUnavailable = isShortcutUnavailable
         self.showWelcome = showWelcome
+        self.setIncludeBetaUpdates = setIncludeBetaUpdates
     }
 }

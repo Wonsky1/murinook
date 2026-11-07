@@ -1510,13 +1510,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keep Murinook up to date. Only stable releases are offered."
+            "value": "Choose which updates Murinook checks for."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Оновлюйте Murinook. Перевіряються лише стабільні релізи."
+            "value": "Виберіть, які оновлення перевірятиме Murinook."
           }
         }
       }
@@ -1542,13 +1542,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Check for a new stable version when Murinook starts."
+            "value": "Check for new releases at launch using your update preferences."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Перевіряти наявність стабільної версії під час запуску Murinook."
+            "value": "Перевіряти нові версії під час запуску відповідно до ваших налаштувань оновлення."
           }
         }
       }
@@ -1670,13 +1670,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Check for the latest stable release."
+            "value": "Check for new releases."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Перевірте наявність стабільного релізу."
+            "value": "Перевірте наявність нових версій."
           }
         }
       }
@@ -2670,6 +2670,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Переносьте файли та інші елементи між програмами за допомогою тимчасової полиці."
+          }
+        }
+      }
+    },
+    "settings.betaUpdates": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Include beta updates"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отримувати бета-оновлення"
+          }
+        }
+      }
+    },
+    "settings.betaUpdatesDetail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offer beta releases alongside stable updates. Beta versions may be less reliable."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пропонувати бета-версії разом зі стабільними оновленнями. Бета-версії можуть працювати менш надійно."
+          }
+        }
+      }
+    },
+    "settings.noNewUpdate": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No newer stable or beta update found."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нових стабільних або бета-оновлень не знайдено."
           }
         }
       }

@@ -44,7 +44,7 @@ Window commands use Rectangle’s recommended default shortcuts. Use Control–O
 
 Closing the Library keeps Murinook running in the background. A one-time explanation shows how to find it in the menu bar. To exit completely, choose **Quit Murinook** from that menu. Opening Murinook again brings the Library back.
 
-Murinook checks GitHub Releases at launch when automatic checks are enabled. It offers **stable releases only**; beta releases are skipped. You can also choose **Check for updates** from the menu bar or **Settings → Updates**.
+Murinook checks GitHub Releases at launch when automatic checks are enabled. Stable releases are offered by default. Enable **Include beta updates** in **Settings → Updates** to also receive beta releases; beta versions may be less reliable. The choice applies to automatic and manual checks, and changing it starts a fresh check. Turning beta updates off does not downgrade an installed beta. You can also choose **Check for updates** from the menu bar or **Settings → Updates**.
 
 When a newer stable version is available, the Library shows an update banner, the menu bar icon gains a small indicator, and the Updates page offers **Download DMG** and **Release notes**. Installation is manual:
 

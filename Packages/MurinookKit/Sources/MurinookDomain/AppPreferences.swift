@@ -89,6 +89,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         })
     }
     public var automaticallyChecksForUpdates: Bool
+    public var includeBetaUpdates: Bool
     public var windowManagementEnabled: Bool
     private var shortcutDefaultsVersion: Int
 
@@ -100,7 +101,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
                 showsDockIcon: Bool = false, launchAtLogin: Bool = false, shelfSide: ShelfSide = .right,
                 shelfOffset: Double = 0.5, autoRemoveShelfItems: Bool = true, autoShowShelf: Bool = true, languageCode: String? = nil,
                 appearance: AppAppearance = .system, historyLayout: HistoryLayout = .list, shortcuts: [ShortcutAction: KeyCombination] = KeyCombination.defaults,
-                automaticallyChecksForUpdates: Bool = true, windowManagementEnabled: Bool = true) {
+                automaticallyChecksForUpdates: Bool = true, windowManagementEnabled: Bool = true, includeBetaUpdates: Bool = false) {
         self.captureEnabled = captureEnabled; self.clipboardEnabled = clipboardEnabled; self.shelfEnabled = shelfEnabled
         self.retentionDays = max(0, retentionDays); self.maxHistoryItems = maxHistoryItems == 0 ? 0 : max(1, maxHistoryItems)
         self.excludedBundleIDs = excludedBundleIDs; self.showsDockIcon = showsDockIcon; self.launchAtLogin = launchAtLogin
@@ -108,10 +109,11 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         self.autoShowShelf = autoShowShelf
         self.languageCode = languageCode; self.appearance = appearance; self.historyLayout = historyLayout; self.shortcuts = shortcuts
         self.automaticallyChecksForUpdates = automaticallyChecksForUpdates
+        self.includeBetaUpdates = includeBetaUpdates
         self.windowManagementEnabled = windowManagementEnabled
         self.shortcutDefaultsVersion = Self.currentShortcutDefaultsVersion
     }
-    private enum CodingKeys: String, CodingKey { case captureEnabled, clipboardEnabled, shelfEnabled, retentionDays, maxHistoryItems, excludedBundleIDs, showsDockIcon, launchAtLogin, shelfSide, shelfOffset, autoRemoveShelfItems, autoShowShelf, languageCode, appearance, historyLayout, shortcuts, automaticallyChecksForUpdates, windowManagementEnabled, shortcutDefaultsVersion }
+    private enum CodingKeys: String, CodingKey { case captureEnabled, clipboardEnabled, shelfEnabled, retentionDays, maxHistoryItems, excludedBundleIDs, showsDockIcon, launchAtLogin, shelfSide, shelfOffset, autoRemoveShelfItems, autoShowShelf, languageCode, appearance, historyLayout, shortcuts, automaticallyChecksForUpdates, windowManagementEnabled, shortcutDefaultsVersion, includeBetaUpdates }
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         let storedDefaultsVersion = try c.decodeIfPresent(Int.self, forKey: .shortcutDefaultsVersion) ?? 0
@@ -136,7 +138,8 @@ public struct AppPreferences: Codable, Equatable, Sendable {
                   historyLayout: try c.decodeIfPresent(HistoryLayout.self, forKey: .historyLayout) ?? .list,
                   shortcuts: shortcuts,
                   automaticallyChecksForUpdates: try c.decodeIfPresent(Bool.self, forKey: .automaticallyChecksForUpdates) ?? true,
-                  windowManagementEnabled: try c.decodeIfPresent(Bool.self, forKey: .windowManagementEnabled) ?? true)
+                  windowManagementEnabled: try c.decodeIfPresent(Bool.self, forKey: .windowManagementEnabled) ?? true,
+                  includeBetaUpdates: try c.decodeIfPresent(Bool.self, forKey: .includeBetaUpdates) ?? false)
         shortcutDefaultsVersion = max(storedDefaultsVersion, Self.currentShortcutDefaultsVersion)
     }
 

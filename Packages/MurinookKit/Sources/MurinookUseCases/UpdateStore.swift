@@ -17,22 +17,27 @@ public final class UpdateStore {
     private let currentVersion: ReleaseVersion
     @ObservationIgnored private var checkTask: Task<AppRelease?, Error>?
     @ObservationIgnored private var checkID: UUID?
+    @ObservationIgnored private var checkingPrereleases: Bool?
 
     public init(source: any ReleaseSource, currentVersion: ReleaseVersion) {
         self.source = source
         self.currentVersion = currentVersion
     }
 
-    public func check() async {
+    public func check(includingPrereleases: Bool = false) async {
         if let checkTask {
-            _ = try? await checkTask.value
-            return
+            if checkingPrereleases == includingPrereleases {
+                _ = try? await checkTask.value
+                return
+            }
+            cancel()
         }
         let id = UUID()
         checkID = id
+        checkingPrereleases = includingPrereleases
         state = .checking
         let source = self.source
-        let task = Task { try await source.latestStableRelease() }
+        let task = Task { try await source.latestRelease(includingPrereleases: includingPrereleases) }
         checkTask = task
         do {
             let release = try await task.value
@@ -42,12 +47,13 @@ public final class UpdateStore {
             guard checkID == id else { return }
             state = Task.isCancelled ? .idle : .failed
         }
-        if checkID == id { checkTask = nil; checkID = nil }
+        if checkID == id { checkTask = nil; checkID = nil; checkingPrereleases = nil }
     }
 
     public func cancel() {
         guard checkTask != nil else { return }
         checkID = nil
+        checkingPrereleases = nil
         checkTask?.cancel()
         checkTask = nil
         state = .idle

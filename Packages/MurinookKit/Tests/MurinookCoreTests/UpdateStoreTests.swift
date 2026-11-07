@@ -70,6 +70,56 @@ final class UpdateStoreTests: XCTestCase {
         XCTAssertEqual(failed.state, .failed)
     }
 
+    func testBetaChoiceIsForwardedAndTurningItOffClearsBetaOffer() async throws {
+        let release = AppRelease(version: try XCTUnwrap(ReleaseVersion("0.1.0-beta.10")), pageURL: URL(string: "https://github.com/a/b/releases/tag/v0.1.0-beta.10")!)
+        let source = PreviewSource(release: release)
+        let store = UpdateStore(source: source, currentVersion: try XCTUnwrap(ReleaseVersion("0.1.0-beta.9")))
+        await store.check()
+        XCTAssertEqual(store.state, .upToDate)
+        await store.check(includingPrereleases: true)
+        XCTAssertEqual(store.state, .available(release))
+        await store.check(includingPrereleases: false)
+        XCTAssertEqual(store.state, .upToDate)
+        let choices = await source.choices
+        XCTAssertEqual(choices, [false, true, false])
+    }
+
+    func testSwitchingToStableIgnoresLateBetaResponse() async throws {
+        let beta = AppRelease(version: try XCTUnwrap(ReleaseVersion("0.2.0-beta.1")), pageURL: URL(string: "https://github.com/a/b/releases/tag/v0.2.0-beta.1")!)
+        let source = SwitchingSource()
+        let store = UpdateStore(source: source, currentVersion: try XCTUnwrap(ReleaseVersion("0.1.0")))
+        let betaCheck = Task { await store.check(includingPrereleases: true) }
+        await source.waitUntilBetaStarted()
+        let stableCheck = Task { await store.check(includingPrereleases: false) }
+        let deadline = ContinuousClock.now + .seconds(1)
+        while !(await source.stableStarted), ContinuousClock.now < deadline {
+            try await Task.sleep(for: .milliseconds(5))
+        }
+        let stableStarted = await source.stableStarted
+        XCTAssertTrue(stableStarted, "Changing channel must start a new request instead of sharing the old beta request")
+        await source.finishBeta(beta)
+        await betaCheck.value
+        await stableCheck.value
+        XCTAssertEqual(store.state, .upToDate, "The late beta result must not reappear after opting out")
+    }
+
+    func testBetaOptInDoesNotOfferDowngradeFromStable() async throws {
+        let release = AppRelease(version: try XCTUnwrap(ReleaseVersion("0.1.0-beta.10")), pageURL: URL(string: "https://github.com/a/b/releases/tag/v0.1.0-beta.10")!)
+        let store = UpdateStore(source: PreviewSource(release: release), currentVersion: try XCTUnwrap(ReleaseVersion("0.1.0")))
+        await store.check(includingPrereleases: true)
+        XCTAssertEqual(store.state, .upToDate)
+    }
+
+    func testBetaUpdateOptInPersistsAndMissingPreferenceDefaultsToOff() throws {
+        let optedIn = try JSONDecoder().decode(AppPreferences.self, from: Data(#"{"includeBetaUpdates":true}"#.utf8))
+        let encoded = try JSONSerialization.jsonObject(with: JSONEncoder().encode(optedIn)) as? [String: Any]
+        XCTAssertEqual(encoded?["includeBetaUpdates"] as? Bool, true)
+
+        let legacy = try JSONDecoder().decode(AppPreferences.self, from: Data("{}".utf8))
+        let legacyEncoded = try JSONSerialization.jsonObject(with: JSONEncoder().encode(legacy)) as? [String: Any]
+        XCTAssertEqual(legacyEncoded?["includeBetaUpdates"] as? Bool, false)
+    }
+
     func testLegacyPreferencesDefaultAutomaticChecksToTrue() throws {
         let decoded = try JSONDecoder().decode(AppPreferences.self, from: Data("{}".utf8))
         XCTAssertTrue(decoded.automaticallyChecksForUpdates)
@@ -82,7 +132,7 @@ final class UpdateStoreTests: XCTestCase {
 
 private struct StubSource: ReleaseSource {
     let result: Result<AppRelease?, Error>
-    func latestStableRelease() async throws -> AppRelease? { try result.get() }
+    func latestRelease(includingPrereleases: Bool) async throws -> AppRelease? { try result.get() }
 }
 
 private enum StubFailure: Error { case expected }
@@ -93,7 +143,7 @@ private actor GatedSource: ReleaseSource {
     private var startContinuation: CheckedContinuation<Void, Never>?
     private var hasStarted = false
 
-    func latestStableRelease() async throws -> AppRelease? {
+    func latestRelease(includingPrereleases: Bool) async throws -> AppRelease? {
         calls += 1
         hasStarted = true
         startContinuation?.resume()
@@ -112,5 +162,40 @@ private actor GatedSource: ReleaseSource {
         let pending = resultContinuations
         resultContinuations.removeAll()
         for continuation in pending { continuation.resume(returning: release) }
+    }
+}
+
+private actor PreviewSource: ReleaseSource {
+    let release: AppRelease
+    private(set) var choices: [Bool] = []
+    init(release: AppRelease) { self.release = release }
+    func latestRelease(includingPrereleases: Bool) async throws -> AppRelease? {
+        choices.append(includingPrereleases)
+        return includingPrereleases ? release : nil
+    }
+}
+
+private actor SwitchingSource: ReleaseSource {
+    private(set) var stableStarted = false
+    private var betaContinuation: CheckedContinuation<AppRelease?, Error>?
+    private var startContinuation: CheckedContinuation<Void, Never>?
+
+    func latestRelease(includingPrereleases: Bool) async throws -> AppRelease? {
+        guard includingPrereleases else { stableStarted = true; return nil }
+        return try await withCheckedThrowingContinuation { continuation in
+            betaContinuation = continuation
+            startContinuation?.resume()
+            startContinuation = nil
+        }
+    }
+
+    func waitUntilBetaStarted() async {
+        if betaContinuation != nil { return }
+        await withCheckedContinuation { startContinuation = $0 }
+    }
+
+    func finishBeta(_ release: AppRelease) {
+        betaContinuation?.resume(returning: release)
+        betaContinuation = nil
     }
 }
