@@ -1,16 +1,18 @@
 import AppKit
+import Observation
 import MurinookDomain
 import MurinookMacIntegration
 import MurinookUseCases
 
 /// Coordinates editing with the saved preferences and the currently active system-wide bindings.
-@MainActor
+@MainActor @Observable
 final class ShortcutSettingsController {
     private let preferences: PreferencesStore
     private let errors: ErrorPresenter
     private let hotkeys = CarbonHotKeyRegistrar()
     private var registrations: [HotKeyRegistration] = []
     private var activeBindings: [ShortcutAction: KeyCombination]?
+    private(set) var unavailableWindowActions: Set<ShortcutAction> = []
     private var recordingWindow: ShortcutRecordingWindowController?
     var onShortcut: ((ShortcutAction) -> Void)?
 
@@ -20,7 +22,7 @@ final class ShortcutSettingsController {
     }
 
     func synchronize() {
-        guard recordingWindow == nil, activeBindings != preferences.value.shortcuts else { return }
+        guard recordingWindow == nil, activeBindings != preferences.value.activeShortcuts else { return }
         do { try activate(preferences.value.shortcuts) }
         catch { errors.show("Could not register keyboard shortcut", detail: message(for: error)) }
     }
@@ -62,7 +64,7 @@ final class ShortcutSettingsController {
         }
         var candidate = previous
         candidate[action] = combination
-        do { try activate(candidate) }
+        do { try activate(candidate, requiredAction: action) }
         catch { return message(for: error) }
 
         guard preferences.update({ $0.shortcuts = candidate }) else {
@@ -79,17 +81,23 @@ final class ShortcutSettingsController {
         return nil
     }
 
-    private func activate(_ bindings: [ShortcutAction: KeyCombination]) throws {
+    private func activate(_ bindings: [ShortcutAction: KeyCombination], requiredAction: ShortcutAction? = nil) throws {
+        var candidate = preferences.value
+        candidate.shortcuts = bindings
+        let enabled = candidate.activeShortcuts
         do {
-            registrations = try hotkeys.register(bindings) { [weak self] action in
+            let batch = try hotkeys.registerAvailable(enabled, requiredAction: requiredAction) { [weak self] action in
                 guard let self, recordingWindow == nil else { return }
                 onShortcut?(action)
             }
-            activeBindings = bindings
+            registrations = batch.registrations
+            unavailableWindowActions = batch.unavailableWindowActions
+            activeBindings = enabled
         } catch {
             if case HotKeyRegistrationError.restorationFailed = error {
                 registrations = []
                 activeBindings = nil
+                unavailableWindowActions = []
             }
             throw error
         }

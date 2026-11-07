@@ -1,7 +1,7 @@
 import Observation
 
 public enum SettingsSection: String, CaseIterable, Identifiable {
-    case general, history, privacy, shortcuts, shelf, updates
+    case general, history, privacy, shortcuts, shelf, windowManagement, updates
 
     public var id: String { rawValue }
 
@@ -12,6 +12,7 @@ public enum SettingsSection: String, CaseIterable, Identifiable {
         case .privacy: "hand.raised"
         case .shortcuts: "keyboard"
         case .shelf: "tray"
+        case .windowManagement: "macwindow"
         case .updates: "arrow.triangle.2.circlepath"
         }
     }

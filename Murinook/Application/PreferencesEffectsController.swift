@@ -18,6 +18,7 @@ final class PreferencesEffectsController {
     }
     var onLanguageChange: ((Locale) -> Void)?
     var onPlacement: ((ShelfSide, Double) -> Void)?
+    var onFeaturesChanged: (() -> Void)?
 
     init(services: ApplicationServices, errors: ErrorPresenter) {
         self.services = services; self.errors = errors
@@ -36,7 +37,7 @@ final class PreferencesEffectsController {
 
     private func apply() {
         let value = services.preferences.value
-        services.monitor.update(policy: ClipboardCapturePolicy(isEnabled: value.captureEnabled,
+        services.monitor.update(policy: ClipboardCapturePolicy(isEnabled: value.clipboardEnabled && value.captureEnabled,
             excludedBundleIdentifiers: Set(value.excludedBundleIDs)))
         if applied?.showsDockIcon != value.showsDockIcon {
             NSApp.setActivationPolicy(value.showsDockIcon ? .regular : .accessory)
@@ -53,6 +54,9 @@ final class PreferencesEffectsController {
             onLanguageChange?(value.languageCode.map(Locale.init(identifier:)) ?? .current)
         }
         onPlacement?(value.shelfSide, value.shelfOffset)
+        if applied?.clipboardEnabled != value.clipboardEnabled || applied?.shelfEnabled != value.shelfEnabled {
+            onFeaturesChanged?()
+        }
         applied = value
     }
 
@@ -96,4 +100,5 @@ final class PreferencesEffectsController {
     func record(_ action: ShortcutAction) { shortcuts.record(action) }
     func resetShortcut(_ action: ShortcutAction) { shortcuts.reset(action) }
     func disableShortcut(_ action: ShortcutAction) { shortcuts.disable(action) }
+    func isShortcutUnavailable(_ action: ShortcutAction) -> Bool { shortcuts.unavailableWindowActions.contains(action) }
 }

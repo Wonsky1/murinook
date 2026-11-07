@@ -15,6 +15,25 @@ struct HistorySettingsSection: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            FeatureEnableSettingsRow(store: store, key: "settings.clipboard.enabled",
+                detail: "settings.clipboard.enabledDetail", icon: "doc.on.clipboard", keyPath: \.clipboardEnabled)
+            options
+                .disabled(!store.value.clipboardEnabled)
+                .opacity(store.value.clipboardEnabled ? 1 : 0.45)
+        }
+        .onAppear { rememberFiniteLimit(store.value.maxHistoryItems) }
+        .onChange(of: store.value.maxHistoryItems) { _, value in rememberFiniteLimit(value) }
+        .confirmationDialog(Text(unlimitedChoice == .time ? "settings.unlimitedTime.confirmTitle" : "settings.unlimitedItems.confirmTitle", bundle: .module),
+                            isPresented: $confirmsUnlimited, titleVisibility: .visible) {
+            Button { enableUnlimited() } label: { Text("settings.unlimitedHistory.confirm", bundle: .module) }
+            Button(role: .cancel) {} label: { Text("settings.cancel", bundle: .module) }
+        } message: {
+            Text("settings.unlimitedHistory.warningMessage", bundle: .module)
+        }
+    }
+
+    private var options: some View {
+        VStack(spacing: 0) {
             SettingsRow(key: "settings.capture", detail: "settings.captureDetail", icon: "clipboard") {
                 Toggle(isOn: bind(\.captureEnabled)) { Text("settings.capture", bundle: .module) }.labelsHidden()
             }
@@ -59,15 +78,13 @@ struct HistorySettingsSection: View {
                 Button(role: .destructive, action: clear) { Label { Text("settings.clearHistory.button", bundle: .module) } icon: { Image(systemName: "trash") } }
                     .buttonStyle(.bordered).disabled(count() == 0)
             }
-        }
-        .onAppear { rememberFiniteLimit(store.value.maxHistoryItems) }
-        .onChange(of: store.value.maxHistoryItems) { _, value in rememberFiniteLimit(value) }
-        .confirmationDialog(Text(unlimitedChoice == .time ? "settings.unlimitedTime.confirmTitle" : "settings.unlimitedItems.confirmTitle", bundle: .module),
-                            isPresented: $confirmsUnlimited, titleVisibility: .visible) {
-            Button { enableUnlimited() } label: { Text("settings.unlimitedHistory.confirm", bundle: .module) }
-            Button(role: .cancel) {} label: { Text("settings.cancel", bundle: .module) }
-        } message: {
-            Text("settings.unlimitedHistory.warningMessage", bundle: .module)
+            SettingsGroup(key: "settings.historyLayout", detail: "settings.historyLayoutDetail", icon: "rectangle.grid.2x2") {
+                Picker(selection: Binding(get: { store.value.historyLayout }, set: { value in store.update { $0.historyLayout = value } })) {
+                    Text("layout.grid", bundle: .module).tag(HistoryLayout.grid)
+                    Text("layout.list", bundle: .module).tag(HistoryLayout.list)
+                    Text("layout.strip", bundle: .module).tag(HistoryLayout.strip)
+                } label: { Text("settings.historyLayout", bundle: .module) }.pickerStyle(.segmented).labelsHidden()
+            }
         }
     }
 

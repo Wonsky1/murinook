@@ -92,6 +92,7 @@ public struct SettingsView: View {
             case .privacy: PrivacySettingsSection(store: store, actions: actions)
             case .shortcuts: ShortcutsSettingsSection(store: store, actions: actions)
             case .shelf: ShelfSettingsSection(store: store)
+            case .windowManagement: WindowManagementSettingsSection(store: store, actions: actions)
             case .updates: UpdateSettingsSection(preferences: store, updates: updates, currentVersion: currentVersion, actions: actions)
             }
         }

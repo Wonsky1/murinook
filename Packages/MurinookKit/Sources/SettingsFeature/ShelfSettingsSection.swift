@@ -9,6 +9,15 @@ struct ShelfSettingsSection: View {
     let store: PreferencesStore
     var body: some View {
         VStack(spacing: 0) {
+            FeatureEnableSettingsRow(store: store, key: "settings.shelf.enabled",
+                detail: "settings.shelf.enabledDetail", icon: "tray", keyPath: \.shelfEnabled)
+            options
+                .disabled(!store.value.shelfEnabled)
+                .opacity(store.value.shelfEnabled ? 1 : 0.45)
+        }
+    }
+    private var options: some View {
+        VStack(spacing: 0) {
             SettingsRow(key: "settings.autoShowShelf", detail: "settings.autoShowShelfDetail", icon: "rectangle.trailinghalf.inset.filled") { Toggle(isOn: bind(\.autoShowShelf)) { Text("settings.autoShowShelf", bundle: .module) }.labelsHidden() }
             SettingsGroup(key: "settings.shelfSide", detail: "settings.shelfSideDetail", icon: "arrow.left.arrow.right") {
                 Picker(selection: bind(\.shelfSide)) { Text("shelf.leftEdge", bundle: .module).tag(ShelfSide.left); Text("shelf.rightEdge", bundle: .module).tag(ShelfSide.right) } label: { Text("settings.shelfSide", bundle: .module) }.pickerStyle(.segmented).labelsHidden()
@@ -17,5 +26,6 @@ struct ShelfSettingsSection: View {
             SettingsRow(key: "settings.autoRemoveShelf", detail: "settings.autoRemoveShelfDetail", icon: "checkmark.circle") { Toggle(isOn: bind(\.autoRemoveShelfItems)) { Text("settings.autoRemoveShelf", bundle: .module) }.labelsHidden() }
         }
     }
+
     private func bind<Value>(_ keyPath: WritableKeyPath<AppPreferences, Value>) -> Binding<Value> { Binding(get: { store.value[keyPath: keyPath] }, set: { value in store.update { $0[keyPath: keyPath] = value } }) }
 }

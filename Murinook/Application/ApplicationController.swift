@@ -1,6 +1,7 @@
 import MurinookUseCases
 import MurinookStorage
 import MurinookMacIntegration
+import MurinookWindowManagement
 import AppKit
 import Foundation
 import Observation
@@ -12,6 +13,7 @@ import MurinookDomain
     let services: ApplicationServices
     let windows: ApplicationWindows
     let updates: AppUpdateController
+    let windowActions: WindowActionsController
     private let maintenance: ContentMaintenanceController
     private let visualBackfill: ContentVisualBackfill
     private let capture: ClipboardCaptureController
@@ -31,6 +33,8 @@ import MurinookDomain
             currentVersion: currentVersion, versionLabel: versionLabel)
         maintenance = ContentMaintenanceController(services: services)
         errors = ErrorPresenter(preferences: services.preferences, diagnostics: services.diagnostics)
+        windowActions = WindowActionsController(manager: services.windowManager,
+            preferences: services.preferences, errors: errors)
         router = ContentActionRouter(services: services, errors: errors)
         effects = PreferencesEffectsController(services: services, errors: errors)
         let transfers = ShelfTransferController(services: services, errors: errors)
@@ -39,17 +43,14 @@ import MurinookDomain
             updates: updates, defaults: defaults)
         capture = ClipboardCaptureController(services: services)
         visualBackfill = ContentVisualBackfill(services: services)
-        windows.onPermissionGatePassed = { [weak self] in
-            self?.capture.start()
-            self?.services.dragMonitor.start()
-        }
+        effects.onFeaturesChanged = { [weak self] in self?.synchronizeFeatures() }
         router.beforePaste = { [weak self] in self?.windows.quick.hide() }
         effects.onPlacement = { [weak self] in self?.windows.shelf.updatePlacement(side: $0, offset: $1) }
         effects.onLanguageChange = { [weak self] in self?.windows.updateLanguage($0) }
         effects.onShortcut = { [weak self] in self?.perform($0) }
         services.dragMonitor.onCandidate = { [weak self] _ in
             guard let self else { return }
-            guard self.services.permission.hasPostEventAccess else { self.windows.showOnboarding(); return }
+            guard self.services.preferences.value.shelfEnabled else { return }
             self.services.diagnostics.event("shelf.auto_show.policy", fields: ["enabled": String(self.services.preferences.value.autoShowShelf)])
             guard self.services.preferences.value.autoShowShelf else { return }
             self.windows.shelf.externalDragStarted()
@@ -83,10 +84,7 @@ import MurinookDomain
         windows.start()
         effects.start()
         visualBackfill.start()
-        if services.permission.hasPostEventAccess {
-            capture.start()
-            services.dragMonitor.start()
-        }
+        synchronizeFeatures()
         startupProblem = nil
         isReady = true
         updates.start()
@@ -94,16 +92,28 @@ import MurinookDomain
         windows.showLaunchExperience()
     }
 
-    func stop() { windows.stop(); updates.stop(); router.stop(); maintenance.stop(); visualBackfill.stop(); capture.stop(); services.dragMonitor.stop(); services.bookmarks.releaseAllAccess() }
+    func stop() { windows.stop(); updates.stop(); router.stop(); maintenance.stop(); visualBackfill.stop(); capture.stop(); services.dragMonitor.stop(); services.windowManager.stop(); services.bookmarks.releaseAllAccess() }
 
     func perform(_ action: ShortcutAction) {
-        guard services.permission.hasPostEventAccess else { windows.showOnboarding(); return }
+        if let windowAction = action.windowAction {
+            windowActions.perform(windowAction)
+            return
+        }
+        guard services.preferences.value.activeShortcuts[action] != nil else { return }
         switch action {
         case .quickAccess: windows.showQuick()
         case .library: windows.showLibrary()
         case .shelf: windows.shelf.show()
         case .pasteNext:
             if let entry = services.queue.next { router.paste(entry.contentID, queueID: entry.id) }
+        default: break // Window actions are routed before the clipboard permission gate.
         }
+    }
+
+    private func synchronizeFeatures() {
+        let preferences = services.preferences.value
+        if preferences.clipboardEnabled { capture.start() } else { capture.stop() }
+        if preferences.shelfEnabled { services.dragMonitor.start() } else { services.dragMonitor.stop() }
+        windows.applyFeatureAvailability()
     }
 }

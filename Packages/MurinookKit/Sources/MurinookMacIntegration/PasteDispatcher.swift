@@ -10,23 +10,6 @@ public struct PasteDispatchResult: Sendable, Equatable {
     public let detail: String?
 }
 
-@MainActor
-public final class PastePermission {
-    private let postEventAccessCheck: () -> Bool
-    private let postEventAccessRequest: () -> Bool
-
-    public init(
-        postEventAccessCheck: @escaping () -> Bool = { CGPreflightPostEventAccess() },
-        postEventAccessRequest: @escaping () -> Bool = { CGRequestPostEventAccess() }
-    ) {
-        self.postEventAccessCheck = postEventAccessCheck
-        self.postEventAccessRequest = postEventAccessRequest
-    }
-
-    public var hasPostEventAccess: Bool { postEventAccessCheck() }
-    public func requestPostEventAccess() -> Bool { postEventAccessRequest() }
-}
-
 private final class WorkspaceActivationObserver: @unchecked Sendable {
     private let center: NotificationCenter
     private let token: NSObjectProtocol

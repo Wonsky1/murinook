@@ -9,7 +9,8 @@ let package = Package(
         .library(name: "MurinookKit", targets: [
             "MurinookDomain", "MurinookUseCases", "MurinookStorage", "MurinookMacIntegration",
             "MurinookDesignSystem", "ClipboardFeature", "ShelfFeature", "PasteQueueFeature",
-            "SettingsFeature", "OnboardingFeature", "MurinookPresentation"
+            "SettingsFeature", "OnboardingFeature", "MurinookPresentation",
+            "MurinookWindowManagement", "WindowManagementFeature"
         ])
     ],
     targets: [
@@ -18,6 +19,8 @@ let package = Package(
         .target(name: "MurinookUseCases", dependencies: ["MurinookDomain"]),
         .target(name: "MurinookStorage", dependencies: ["MurinookDomain", "MurinookUseCases"]),
         .target(name: "MurinookMacIntegration", dependencies: ["MurinookDomain", "MurinookUseCases"]),
+        .target(name: "MurinookWindowManagement", dependencies: ["MurinookDomain"]),
+        .target(name: "WindowManagementFeature", dependencies: ["MurinookDomain", "MurinookDesignSystem"], resources: [.process("Resources")]),
         .target(name: "MurinookDesignSystem", resources: [.process("Resources")]),
         .target(name: "ClipboardFeature", dependencies: ["MurinookDomain", "MurinookUseCases", "MurinookDesignSystem"], resources: [.process("Resources")]),
         .target(name: "ShelfFeature", dependencies: ["MurinookDomain", "MurinookUseCases", "MurinookDesignSystem", "MurinookPresentation"], resources: [.process("Resources")]),
@@ -26,6 +29,7 @@ let package = Package(
         .target(name: "OnboardingFeature", dependencies: ["MurinookDomain", "MurinookUseCases", "MurinookDesignSystem"], resources: [.process("Resources")]),
         .testTarget(name: "MurinookPresentationTests", dependencies: ["MurinookPresentation"]),
         .testTarget(name: "MurinookCoreTests", dependencies: ["MurinookDomain", "MurinookUseCases", "MurinookStorage"]),
-        .testTarget(name: "MurinookMacTests", dependencies: ["MurinookMacIntegration", "MurinookDomain", "SettingsFeature"])
+        .testTarget(name: "MurinookMacTests", dependencies: ["MurinookMacIntegration", "MurinookDomain", "SettingsFeature"]),
+        .testTarget(name: "MurinookWindowManagementTests", dependencies: ["MurinookWindowManagement", "MurinookDomain"])
     ]
 )

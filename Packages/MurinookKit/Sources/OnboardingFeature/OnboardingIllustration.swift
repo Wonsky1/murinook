@@ -9,7 +9,7 @@ struct OnboardingIllustration: View {
         case 0: "square.on.square"
         case 1: "clock.arrow.circlepath"
         case 2: "tray.full.fill"
-        default: "keyboard"
+        default: "rectangle.split.2x1"
         }
     }
 
@@ -44,9 +44,10 @@ struct OnboardingIllustration: View {
     @ViewBuilder
     private var diagram: some View {
         switch step {
-        case 0, 1: ClipboardDiagram()
+        case 0: WelcomeDiagram()
+        case 1: ClipboardDiagram()
         case 2: ShelfDiagram()
-        default: KeyboardDiagram()
+        default: WindowDiagram()
         }
     }
 }
@@ -124,29 +125,55 @@ private struct ShelfDiagram: View {
     }
 }
 
-private struct KeyboardDiagram: View {
-    private let keys = ["⌃", "⌥", "V"]
-
+private struct WelcomeDiagram: View {
     var body: some View {
-        VStack(spacing: 13) {
-            Image(systemName: "cursorarrow.and.square.on.square.dashed")
-                .font(.system(size: 23, weight: .light)).foregroundStyle(MurinookPalette.accent)
-            HStack(spacing: 6) {
-                ForEach(keys, id: \.self) { key in
-                    Text(key).font(.system(size: 16, weight: .medium, design: .rounded))
-                        .foregroundStyle(MurinookPalette.text.opacity(0.72))
-                        .frame(width: 38, height: 36)
-                        .background(MurinookPalette.surface, in: RoundedRectangle(cornerRadius: 7))
-                        .overlay(RoundedRectangle(cornerRadius: 7).stroke(MurinookPalette.border, lineWidth: 1))
-                        .shadow(color: .black.opacity(0.12), radius: 5, y: 3)
+        VStack(spacing: 18) {
+            MurinookBrandMark(size: 66)
+            HStack(spacing: 14) {
+                ForEach(["doc.on.clipboard", "tray.full", "rectangle.split.2x1"], id: \.self) { symbol in
+                    Image(systemName: symbol)
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundStyle(MurinookPalette.accent)
+                        .frame(width: 45, height: 45)
+                        .background(MurinookPalette.surface, in: RoundedRectangle(cornerRadius: 12))
                 }
             }
-            Text("Murinook.diagram.shortcut", bundle: .module)
-                .font(.system(size: 11, weight: .medium)).foregroundStyle(MurinookPalette.muted)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(MurinookPalette.surface.opacity(0.95), in: RoundedRectangle(cornerRadius: 10))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(MurinookPalette.border, lineWidth: 1))
-        .shadow(color: .black.opacity(0.12), radius: 13, y: 7)
+    }
+}
+
+private struct WindowDiagram: View {
+    var body: some View {
+        VStack(spacing: 14) {
+            HStack(spacing: 6) {
+                windowTile(tint: MurinookPalette.accent)
+                windowTile(tint: MurinookPalette.warm)
+            }
+            .padding(8)
+            .background(MurinookPalette.surface.opacity(0.7), in: RoundedRectangle(cornerRadius: 12))
+            HStack(spacing: 8) {
+                Text(verbatim: "⌃ ⌥ ←")
+                Text(verbatim: "⌃ ⌥ →")
+            }
+            .font(.system(size: 12, weight: .medium, design: .monospaced))
+            .foregroundStyle(MurinookPalette.accent)
+        }
+    }
+
+    private func windowTile(tint: Color) -> some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 3) {
+                ForEach(0..<3, id: \.self) { _ in
+                    Circle().fill(tint.opacity(0.65)).frame(width: 4, height: 4)
+                }
+                Spacer(minLength: 0)
+            }.padding(7)
+            Rectangle().fill(tint.opacity(0.17))
+                .overlay(Image(systemName: "macwindow").font(.system(size: 24, weight: .light)).foregroundStyle(tint))
+        }
+        .frame(height: 115)
+        .background(MurinookPalette.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .overlay(RoundedRectangle(cornerRadius: 6).stroke(tint.opacity(0.4), lineWidth: 1))
     }
 }

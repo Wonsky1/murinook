@@ -26,9 +26,13 @@ struct MurinookApp: App {
         .commands {
             CommandMenu(AppStrings.text("Navigate", locale: locale)) {
                 Button(AppStrings.text("Quick access", locale: locale)) { delegate.controller?.windows.showQuick() }
+                    .disabled(delegate.controller?.services.preferences.value.clipboardEnabled != true)
                 Button(AppStrings.text("Library", locale: locale)) { delegate.controller?.windows.showLibrary() }
+                    .disabled(delegate.controller?.services.preferences.value.clipboardEnabled != true)
                 Button(AppStrings.text("Show shelf", locale: locale)) { delegate.controller?.windows.shelf.show() }
+                    .disabled(delegate.controller?.services.preferences.value.shelfEnabled != true)
                 Button(AppStrings.text("Paste queue", locale: locale)) { delegate.controller?.windows.showQueue() }
+                    .disabled(delegate.controller?.services.preferences.value.clipboardEnabled != true)
             }
             CommandGroup(replacing: .appSettings) {
                 Button(AppStrings.text("Settings", locale: locale) + "…") { delegate.controller?.windows.showSettings() }.keyboardShortcut(",")

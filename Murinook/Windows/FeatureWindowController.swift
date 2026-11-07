@@ -40,6 +40,9 @@ import SwiftUI
     }
 
     func hide() { foreground.cancel(window); visibility.hide(window) }
+    /// Terminal dismissal before releasing the controller must not depend on
+    /// an animation completion owned by that same controller.
+    func dismissImmediately() { foreground.cancel(window); window.orderOut(nil) }
     func close() { hide(); onClose?() }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {

@@ -6,8 +6,6 @@ import SwiftUI
 
 struct PrivacySettingsSection: View {
     let store: PreferencesStore; let actions: SettingsActions
-    @Environment(\.scenePhase) private var scenePhase
-    @State private var permissionGranted = false
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 11) {
@@ -28,20 +26,12 @@ struct PrivacySettingsSection: View {
                 Button(action: actions.chooseExcludedApps) { Label { Text("settings.addExcludedApp", bundle: .module) } icon: { Image(systemName: "plus") } }.buttonStyle(.bordered)
             }
             SettingsGroup(key: "settings.pastePermission", detail: "settings.pastePermissionDetail", icon: "accessibility") {
-                HStack(spacing: 8) {
-                    Circle().fill(permissionGranted ? MurinookPalette.accent : MurinookPalette.warm).frame(width: 7, height: 7)
-                    Text(permissionGranted ? "settings.permissionGranted" : "settings.permissionMissing", bundle: .module).font(.system(size: 11)).foregroundStyle(MurinookPalette.muted)
-                    Spacer(minLength: 0)
-                    Button("settings.requestPastePermission") {
-                        permissionGranted = actions.requestPostEventAccess() || actions.hasPostEventAccess()
-                    }.buttonStyle(.borderedProminent)
-                    Button("settings.accessibilityHelp", action: actions.showAccessibilityHelp).buttonStyle(.link)
-                }
+                PermissionSettingsControl(grantedKey: "settings.permissionGranted", missingKey: "settings.permissionMissing",
+                    check: actions.hasPostEventAccess, request: actions.requestPostEventAccess,
+                    openSettings: actions.showAccessibilityHelp)
             }
         }
-        .onAppear { refreshPermission() }
-        .onChange(of: scenePhase) { _, phase in if phase == .active { refreshPermission() } }
+        .disabled(!store.value.clipboardEnabled)
+        .opacity(store.value.clipboardEnabled ? 1 : 0.45)
     }
-
-    private func refreshPermission() { permissionGranted = actions.hasPostEventAccess() }
 }

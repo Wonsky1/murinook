@@ -3,6 +3,7 @@ import MurinookDomain
 import MurinookUseCases
 import MurinookStorage
 import MurinookMacIntegration
+import MurinookWindowManagement
 
 /// The composition root owns lifetimes; each service keeps its own responsibility.
 final class ApplicationServices {
@@ -22,6 +23,7 @@ final class ApplicationServices {
     let permission: PastePermission
     let dispatcher: PasteDispatcher
     let providers: ContentItemProviderFactory
+    let windowManager: WindowManager
 
     init(directory: URL) throws {
         diagnostics = DragDiagnostics(directory: directory.appendingPathComponent("Diagnostics", isDirectory: true))
@@ -43,10 +45,21 @@ final class ApplicationServices {
         monitor = ClipboardMonitor(policy: ClipboardCapturePolicy(
             isEnabled: preferences.value.captureEnabled,
             excludedBundleIdentifiers: Set(preferences.value.excludedBundleIDs)), writeRegistry: registry, bookmarkAdapter: bookmarks)
-        permission = PastePermission()
+        let permissionDiagnostics = diagnostics
+        permission = PastePermission(diagnostics: { record in
+            var fields = ["postEventAccess": String(record.postEventAccess),
+                          "accessibilityTrusted": String(record.accessibilityTrusted),
+                          "processIdentifier": String(record.processIdentifier)]
+            if let result = record.requestResult { fields["requestResult"] = String(result) }
+            permissionDiagnostics.event("permission." + record.trigger.rawValue, fields: fields)
+        })
         dispatcher = PasteDispatcher(writer: writer, permission: permission,
             applicationBundleIdentifier: Bundle.main.bundleIdentifier ?? "wonsky.Murinook")
         dragMonitor = ExternalDragMonitor(diagnostics: diagnostics)
         providers = ContentItemProviderFactory()
+        let windowDiagnostics = diagnostics
+        windowManager = WindowManager(diagnostics: { record in
+            windowDiagnostics.event("window." + record.stage, fields: record.fields)
+        })
     }
 }

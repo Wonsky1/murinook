@@ -1,6 +1,7 @@
 import MurinookMacIntegration
 import MurinookStorage
 import AppKit
+import MurinookWindowManagement
 import Observation
 import SwiftUI
 import MurinookDomain
@@ -30,7 +31,6 @@ final class ApplicationWindows {
     private var queue: FeatureWindowController?
     private var onboarding: FeatureWindowController?
     private var backgroundExplanation: BackgroundExplanationController?
-    var onPermissionGatePassed: (() -> Void)?
 
     init(services: ApplicationServices, router: ContentActionRouter,
          effects: PreferencesEffectsController, transfers: ShelfTransferController, updates: AppUpdateController,
@@ -91,7 +91,7 @@ final class ApplicationWindows {
     }
 
     func showQuick() {
-        guard services.permission.hasPostEventAccess else { showOnboarding(); return }
+        guard services.preferences.value.clipboardEnabled else { showSettings(); return }
         self.quick.show(content: AnyView(FeatureEnvironment(preferences: self.services.preferences) {
             QuickAccessView(store: self.services.history, actions: QuickAccessActions(
                 paste: { [weak self] in self?.router.paste($0.contentID) },
@@ -104,7 +104,7 @@ final class ApplicationWindows {
     }
 
     func showLibrary() {
-        guard services.permission.hasPostEventAccess else { showOnboarding(); return }
+        guard services.preferences.value.clipboardEnabled else { showSettings(); return }
         if library == nil {
             library = FeatureWindowController(title: "Murinook", size: NSSize(width: 1120, height: 740),
                 minimumSize: NSSize(width: 840, height: 600), content: AnyView(FeatureEnvironment(preferences: self.services.preferences) {
@@ -127,7 +127,7 @@ final class ApplicationWindows {
     }
 
     func showQueue() {
-        guard services.permission.hasPostEventAccess else { showOnboarding(); return }
+        guard services.preferences.value.clipboardEnabled else { showSettings(); return }
         if queue == nil {
             queue = FeatureWindowController(title: localized("Paste queue"), size: NSSize(width: 590, height: 480),
                 minimumSize: NSSize(width: 590, height: 470), content: AnyView(FeatureEnvironment(preferences: self.services.preferences) {
@@ -143,7 +143,6 @@ final class ApplicationWindows {
     }
 
     func showSettings() {
-        guard services.permission.hasPostEventAccess else { showOnboarding(); return }
         if settings == nil {
             settings = FeatureWindowController(title: localized("Settings"), size: NSSize(width: 920, height: 630),
                 minimumSize: NSSize(width: 780, height: 560), content: settingsView, foreground: foreground, autosaveName: "Murinook.Settings")
@@ -157,8 +156,12 @@ final class ApplicationWindows {
     }
 
     func showUpdateSettings() {
-        guard services.permission.hasPostEventAccess else { showOnboarding(); return }
         settingsNavigation.selection = .updates
+        showSettings()
+    }
+
+    func showWindowManagementSettings() {
+        settingsNavigation.selection = .windowManagement
         showSettings()
     }
 
@@ -169,7 +172,9 @@ final class ApplicationWindows {
                 resetShortcut: self.effects.resetShortcut, disableShortcut: self.effects.disableShortcut,
                 showAccessibilityHelp: self.effects.openAccessibilitySettings,
                 requestPostEventAccess: self.services.permission.requestPostEventAccess,
-                hasPostEventAccess: { self.services.permission.hasPostEventAccess },
+                hasPostEventAccess: self.services.permission.checkPostEventAccess,
+                hasWindowAccessibilityAccess: self.checkWindowAccess,
+                requestWindowAccessibilityAccess: self.services.windowManager.requestAccessibilityAccess,
                 openLoginItemsSettings: self.effects.openLoginSettings,
                 setDockIconVisible: self.effects.setDockVisible, setLaunchAtLogin: self.effects.setLaunchAtLogin,
                 clearUnpinnedHistory: { Task { await self.services.history.clearUnpinned() } },
@@ -177,36 +182,35 @@ final class ApplicationWindows {
                 checkForUpdates: self.updates.checkManually,
                 setAutomaticUpdateChecks: self.updates.setAutomaticChecks,
                 openUpdatePage: self.updates.openPage, downloadUpdate: self.updates.download,
-                shortcutDescription: { $0.map(ShortcutDescriptionFormatter.string(for:)) ?? "—" }),
+                shortcutDescription: { $0.map(ShortcutDescriptionFormatter.string(for:)) ?? "—" },
+                isShortcutUnavailable: self.effects.isShortcutUnavailable,
+                showWelcome: self.replayWelcome),
                 navigation: self.settingsNavigation, updates: self.updates.store, currentVersion: self.updates.versionLabel)
         })
     }
 
     func showOnboarding() {
         if let onboarding { onboarding.show(); return }
-        onboarding = FeatureWindowController(title: "Murinook", size: NSSize(width: 760, height: 550),
-            minimumSize: NSSize(width: 760, height: 550), content: AnyView(FeatureEnvironment(preferences: self.services.preferences) {
+        onboarding = FeatureWindowController(title: "Murinook", size: NSSize(width: 800, height: 620),
+            minimumSize: NSSize(width: 760, height: 590), content: AnyView(FeatureEnvironment(preferences: self.services.preferences) {
                 OnboardingView(store: self.services.preferences, actions: OnboardingActions(
                     requestPostEventAccess: self.services.permission.requestPostEventAccess,
                     openAccessibilitySettings: self.effects.openAccessibilitySettings,
-                    hasPostEventAccess: { [weak self] in self?.services.permission.hasPostEventAccess ?? false },
-                    permissionGranted: { [weak self] in self?.permissionGatePassed() },
-                    finish: { [weak self] in self?.finishOnboarding() }))
+                    hasPostEventAccess: self.services.permission.checkPostEventAccess,
+                    finish: { [weak self] in self?.finishOnboarding() },
+                    hasWindowAccessibilityAccess: self.checkWindowAccess,
+                    requestWindowAccessibilityAccess: self.services.windowManager.requestAccessibilityAccess))
             }), foreground: foreground, onClose: { [weak self] in self?.finishOnboarding() })
         onboarding?.show()
     }
 
     func showLaunchExperience() {
         let needsOnboarding = presentation.launch()
-        guard services.permission.hasPostEventAccess else { showOnboarding(); return }
-        showLibrary()
-        if needsOnboarding { showOnboarding() }
+        if needsOnboarding { showOnboarding() } else { showLibrary() }
     }
 
     func reopen() {
-        guard services.permission.hasPostEventAccess else { showOnboarding(); return }
-        showLibrary()
-        if presentation.onboardingVisible { showOnboarding() }
+        if presentation.onboardingVisible { showOnboarding() } else { showLibrary() }
     }
 
     func stop() {
@@ -216,19 +220,30 @@ final class ApplicationWindows {
     }
 
     private func finishOnboarding() {
-        guard services.permission.hasPostEventAccess else { onboarding?.show(); return }
         presentation.completeOnboarding()
         defaults.set(true, forKey: "onboardingCompleted")
-        onboarding?.hide()
+        onboarding?.dismissImmediately()
+        onboarding = nil
         showLibrary()
     }
 
-    private func permissionGatePassed() {
-        onPermissionGatePassed?()
-        if defaults.bool(forKey: "onboardingCompleted") {
-            onboarding?.hide()
-            showLibrary()
-        }
+    private func replayWelcome() {
+        onboarding?.dismissImmediately()
+        onboarding = nil
+        showOnboarding()
+    }
+
+    func applyFeatureAvailability() {
+        let value = services.preferences.value
+        if !value.clipboardEnabled { quick.hide(); library?.hide(); queue?.hide() }
+        shelf.setEnabled(value.shelfEnabled)
+    }
+
+    private func checkWindowAccess() -> Bool {
+        let access = services.windowManager.hasAccessibilityAccess
+        services.diagnostics.event("permission.window.check", fields: ["accessibilityTrusted": String(access),
+            "postEventAccess": String(services.permission.hasPostEventAccess)])
+        return access
     }
 
     private func libraryClosed() {
@@ -253,7 +268,10 @@ final class ApplicationWindows {
         quick.setTitle(AppStrings.text("Quick access", locale: locale))
     }
 
-    private func addToShelf(_ clip: Clip) { self.router.addToShelf(clip); self.shelf.show() }
+    private func addToShelf(_ clip: Clip) {
+        guard services.preferences.value.shelfEnabled else { showSettings(); return }
+        self.router.addToShelf(clip); self.shelf.show()
+    }
     private func localized(_ key: String) -> String {
         AppStrings.text(key, locale: self.services.preferences.value.languageCode.map(Locale.init(identifier:)) ?? .current)
     }

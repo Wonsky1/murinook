@@ -10,6 +10,10 @@ struct GeneralSettingsSection: View {
     private var languageBinding: Binding<String> { Binding(get: { store.value.languageCode ?? "" }, set: { value in store.update { $0.languageCode = value.isEmpty ? nil : value } }) }
     var body: some View {
         VStack(spacing: 0) {
+            SettingsRow(key: "settings.welcome", detail: "settings.welcomeDetail", icon: "hand.wave") {
+                Button(action: actions.showWelcome) { Text("settings.showWelcome", bundle: .module) }
+                    .buttonStyle(.bordered)
+            }
             SettingsRow(key: "settings.launchAtLogin", detail: "settings.launchAtLoginDetail", icon: "power") {
                 HStack(spacing: 8) {
                     Toggle(isOn: Binding(get: { store.value.launchAtLogin }, set: { actions.setLaunchAtLogin($0) })) { Text("settings.launchAtLogin", bundle: .module) }.labelsHidden()
@@ -18,13 +22,6 @@ struct GeneralSettingsSection: View {
             }
             SettingsRow(key: "settings.dockIcon", detail: "settings.dockIconDetail", icon: "macwindow") {
                 Toggle(isOn: Binding(get: { store.value.showsDockIcon }, set: { actions.setDockIconVisible($0) })) { Text("settings.dockIcon", bundle: .module) }.labelsHidden()
-            }
-            SettingsGroup(key: "settings.historyLayout", detail: "settings.historyLayoutDetail", icon: "rectangle.grid.2x2") {
-                Picker(selection: Binding(get: { store.value.historyLayout }, set: { value in store.update { $0.historyLayout = value } })) {
-                    Text("layout.grid", bundle: .module).tag(HistoryLayout.grid)
-                    Text("layout.list", bundle: .module).tag(HistoryLayout.list)
-                    Text("layout.strip", bundle: .module).tag(HistoryLayout.strip)
-                } label: { Text("settings.historyLayout", bundle: .module) }.pickerStyle(.segmented).labelsHidden()
             }
             SettingsGroup(key: "settings.appearance", detail: "settings.appearanceDetail", icon: "sun.max") {
                 Picker(selection: Binding(get: { store.value.appearance }, set: { value in store.update { $0.appearance = value } })) {

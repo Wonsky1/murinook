@@ -24,6 +24,7 @@ final class ShelfTransferController {
     }
 
     func draggingItems(_ items: [ShelfItem]) async -> [NSDraggingItem] {
+        guard services.preferences.value.shelfEnabled else { return [] }
         services.diagnostics.event("shelf.outgoing.prepare", fields: ["selected_count": String(items.count)])
         do {
             return try await services.contentAccess.withAccess {
@@ -49,6 +50,7 @@ final class ShelfTransferController {
     }
 
     func dragStarted(_ items: [ShelfItem]) -> Bool {
+        guard services.preferences.value.shelfEnabled else { return false }
         services.diagnostics.event("shelf.outgoing.start", fields: ["selected_count": String(items.count)])
         releaseDragAccess()
         guard services.contentAccess.tryBeginAccess() else {
@@ -75,7 +77,7 @@ final class ShelfTransferController {
         }
     }
 
-    func canAcceptDrop() -> Bool { !services.dragMonitor.isInternalDragActive }
+    func canAcceptDrop() -> Bool { services.preferences.value.shelfEnabled && !services.dragMonitor.isInternalDragActive }
 
     /// Captures the sender's pasteboard while the native drop grant is active.
     /// Real file URLs take priority over promises so ordinary files stay referenced originals.

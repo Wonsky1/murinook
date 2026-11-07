@@ -1,6 +1,6 @@
 # Murinook
 
-A native macOS clipboard manager and temporary drag-and-drop shelf. Keep recent copies within reach, organize what matters, and carry files between apps from a small panel at the edge of your screen.
+A native macOS app for clipboard history, a temporary drag-and-drop file shelf, and window management. Keep recent copies within reach, organize what matters, and carry files between apps from a small panel at the edge of your screen.
 
 **macOS 14+ · Apple silicon & Intel · English & Ukrainian**
 
@@ -22,6 +22,7 @@ This beta is ad-hoc signed and **not notarized**. If macOS blocks it, first try 
 - **Temporary shelf:** drag supported content to reveal the shelf. Dropped items remain available while you work; move the shelf along a screen edge, hide it to a small restore button, and drag items out when ready.
 - **Paste queue:** line up clips and paste them one at a time.
 - **Configurable shortcuts:** record your own key combinations or disable individual global shortcuts.
+- **Window management:** arrange other apps’ windows into halves, quarters or thirds, maximize or center them, restore their previous frame, and move them between displays. Use Arrange windows in the menu bar or the default shortcuts; customize them in Settings → Window Management.
 - **English and Ukrainian:** choose either language in Settings, or follow the system language.
 
 ## Keyboard shortcuts
@@ -34,6 +35,10 @@ This beta is ad-hoc signed and **not notarized**. If macOS blocks it, first try 
 | Paste next queued item | `⌃⌥V` |
 
 Change these in **Settings → Shortcuts**. In Quick Access, click a clip or press Return to paste it, Shift-Return to paste plain text, and Escape to dismiss the panel.
+
+Clipboard, File Shelf, and Window Management are enabled by default for new preferences. Welcome introduces each feature on its own page with a switch; change each switch in its own **Clipboard**, **File Shelf** or **Window Management** settings tab, or replay the greeting with **General → Show welcome**. Disabled features keep their settings visible and inactive. Turning a feature off keeps its stored data and shortcut choices. Existing saved feature choices are preserved.
+
+Window commands use Rectangle’s recommended default shortcuts. Use Control–Option with the arrow keys for halves, U/I/J/K for quarters, D/F/G for thirds, Return to maximize, C to center, and Delete to restore; add Command to the left/right arrows to change displays. That page lets you replace or disable any shortcut, restore its default, and check Accessibility access for controlling windows. Saved custom assignments are preserved when defaults are introduced. Restore remembers each window’s frame for the current Murinook session. Some apps enforce minimum sizes; full-screen and other unsupported windows cannot be arranged. Moving between displays requires another connected display. This version uses menu commands and shortcuts; drag-to-edge snapping is deferred.
 
 ## Updates
 
@@ -57,9 +62,9 @@ Automatic checks can be disabled in Settings. The currently published `0.1.0-bet
 - History retention and item limits are configurable and can be disabled independently. Unlimited history can use more disk space, slow loading/search, and keep sensitive clips for longer; Settings explains these tradeoffs before enabling it. Pinned clips are exempt from automatic history cleanup.
 - Files and folders added to the shelf are normally **references to their originals**, not duplicate copies. Keep the originals available. Temporary exports and promised files supplied by other apps may need a local copy.
 - Dragging a shelf file out copies it to the destination. Accepted transfers remove it from the shelf when automatic removal is enabled; removing it from the shelf never deletes its original.
-- Capture can be paused and apps can be excluded. Clipboard representations marked private, concealed, or transient are skipped, but these conventions depend on the source app. Clipboard history may contain sensitive information.
+- Each feature can be turned off independently. Capture can also be paused and apps can be excluded. Clipboard representations marked private, concealed, or transient are skipped, but these conventions depend on the source app. Clipboard history may contain sensitive information.
 - Optional update checks request public release metadata from GitHub. Clipboard contents are not sent in those requests. There is no cloud sync or image OCR in this release.
-- To support direct paste into other apps, this direct-install beta runs outside macOS App Sandbox. macOS still requires Accessibility permission for paste commands; without the sandbox, Murinook has broader access to your user account if compromised.
+- To support direct paste into other apps, this direct-install beta runs outside macOS App Sandbox. macOS still requires permission for paste commands and window control; without the sandbox, Murinook has broader access to your user account if compromised.
 
 Deleting only the `.app` leaves its separate data storage in place. Cleanup tools that also remove application data can erase history and settings. Back up important data before a complete uninstall.
 

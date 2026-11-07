@@ -11,6 +11,7 @@ import MurinookPresentation
     private let tab = FloatingPanel(size: NSSize(width: 28, height: 48))
     private var state = ShelfPresentation()
     private var itemCount = 0
+    private var isEnabled = true
     private(set) var isDragging = false
     private var side: ShelfSide = .right
     private var offset: Double = 0.5
@@ -34,6 +35,7 @@ import MurinookPresentation
         self.side = side
         self.offset = offset
         self.preferences = preferences
+        self.isEnabled = preferences.value.shelfEnabled
         self.diagnostics = diagnostics
         // NSPanel already owns an empty content view; checking it for nil never installs the shelf.
         let destination = ShelfDropDestinationView(contentView: NSHostingView(rootView: content()), diagnostics: diagnostics)
@@ -57,6 +59,7 @@ import MurinookPresentation
         itemCount = count; state.itemsChanged(count: count); updateWindows()
     }
     func externalDragStarted() {
+        guard isEnabled else { return }
         diagnostics?.event("shelf.external_drag.started")
         screen = NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) } ?? NSScreen.main
         isDragging = true
@@ -72,6 +75,7 @@ import MurinookPresentation
         self.itemCount = itemCount; isDragging = false; state.dropSucceeded(itemCount: itemCount); updateWindows()
     }
     func show() {
+        guard isEnabled else { return }
         diagnostics?.event("shelf.manual.show")
         state.restore()
         updateWindows()
@@ -80,6 +84,14 @@ import MurinookPresentation
     func hide() {
         diagnostics?.event("shelf.manual.hide")
         state.hide(); updateWindows()
+    }
+
+    func setEnabled(_ enabled: Bool) {
+        guard isEnabled != enabled else { return }
+        isEnabled = enabled
+        isDragging = false
+        state = ShelfPresentation(itemCount: itemCount)
+        updateWindows()
     }
 
     func moveAnchor(to point: NSPoint) {
@@ -99,6 +111,11 @@ import MurinookPresentation
     }
 
     private func updateWindows() {
+        guard isEnabled else {
+            panelVisibility.hide(panel)
+            tabVisibility.hide(tab)
+            return
+        }
         guard let display = screen ?? NSScreen.main ?? NSScreen.screens.first else { return }
         let locale = preferences?.value.languageCode.map(Locale.init(identifier:)) ?? .current
         panel.title = AppStrings.text("Shelf", locale: locale)

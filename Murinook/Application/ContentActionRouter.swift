@@ -27,6 +27,7 @@ import MurinookMacIntegration
     }
 
     func copy(_ contentID: UUID, plain: Bool = false) {
+        guard services.preferences.value.clipboardEnabled else { return }
         Task {
             await services.contentAccess.withAccess {
                 do {
@@ -39,6 +40,7 @@ import MurinookMacIntegration
     }
 
     func paste(_ contentID: UUID, plain: Bool = false, queueID: UUID? = nil) {
+        guard services.preferences.value.clipboardEnabled else { return }
         guard !isPasting else { return }
         isPasting = true
         Task {
@@ -63,6 +65,7 @@ import MurinookMacIntegration
     }
 
     func addToShelf(_ clip: Clip) {
+        guard services.preferences.value.shelfEnabled else { return }
         Task {
             await services.contentAccess.withAccess {
                 do {
@@ -75,6 +78,7 @@ import MurinookMacIntegration
     }
 
     func addToQueue(_ clip: Clip) {
+        guard services.preferences.value.clipboardEnabled else { return }
         Task {
             await services.contentAccess.withAccess {
                 do {

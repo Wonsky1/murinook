@@ -774,13 +774,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Shelf"
+            "value": "File Shelf"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Полиця"
+            "value": "Полиця файлів"
           }
         }
       }
@@ -998,13 +998,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "History"
+            "value": "Clipboard"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Історія"
+            "value": "Буфер обміну"
           }
         }
       }
@@ -1789,6 +1789,887 @@
           "stringUnit": {
             "state": "translated",
             "value": "Murinook не видалятиме історію за вимкненим обмеженням. Збережений вміст може займати більше місця на диску, уповільнювати завантаження й пошук та довше зберігати чутливі дані. Інші ввімкнені обмеження діють. Ви можете повернути обмеження або видалити історію будь-коли."
+          }
+        }
+      }
+    },
+    "settings.section.windowManagement": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Window Management"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Керування вікнами"
+          }
+        }
+      }
+    },
+    "settings.lead.windowManagement": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrange the front window with shortcuts. Enable access and choose your own keys."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Розташовуйте активне вікно за допомогою сполучень клавіш. Увімкніть доступ і виберіть власні клавіші."
+          }
+        }
+      }
+    },
+    "settings.windowManagement.enabled": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable window management"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Увімкнути керування вікнами"
+          }
+        }
+      }
+    },
+    "settings.windowManagement.enabledDetail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add shortcuts for moving, sizing and restoring the front window."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Додайте сполучення клавіш для переміщення, зміни розміру й відновлення активного вікна."
+          }
+        }
+      }
+    },
+    "settings.windowManagement.permission": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accessibility access"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Доступ до універсального доступу"
+          }
+        }
+      }
+    },
+    "settings.windowManagement.permissionDetail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Murinook needs Accessibility access to move and resize other apps’ windows. You can enable window management and set shortcuts before granting access."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Murinook потрібен доступ до універсального доступу, щоб переміщувати вікна інших програм і змінювати їхній розмір. Ви можете ввімкнути керування вікнами й налаштувати сполучення до надання доступу."
+          }
+        }
+      }
+    },
+    "settings.windowManagement.permissionGranted": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Window control access is available"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Доступ до керування вікнами надано"
+          }
+        }
+      }
+    },
+    "settings.windowManagement.permissionMissing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Window control access has not been granted"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Доступ до керування вікнами ще не надано"
+          }
+        }
+      }
+    },
+    "settings.windowManagement.requestPermission": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Request access"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запросити доступ"
+          }
+        }
+      }
+    },
+    "settings.windowManagement.shortcuts": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Window shortcuts"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сполучення клавіш для вікон"
+          }
+        }
+      }
+    },
+    "settings.windowManagement.shortcutsDetail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rectangle’s recommended shortcuts are assigned by default. Click any shortcut to choose your own, or restore its default."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "За замовчуванням призначено рекомендовані сполучення Rectangle. Натисніть будь-яке сполучення, щоб змінити його, або відновіть типове."
+          }
+        }
+      }
+    },
+    "settings.windowManagement.shortcutsDisabled": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable window management to configure its shortcuts."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Увімкніть керування вікнами, щоб налаштувати сполучення клавіш."
+          }
+        }
+      }
+    },
+    "shortcut.windowLeftHalf": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Left Half"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ліва половина"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowLeftHalf": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to the left half of the display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити в ліву половину дисплея"
+          }
+        }
+      }
+    },
+    "shortcut.windowRightHalf": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right Half"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Права половина"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowRightHalf": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to the right half of the display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити в праву половину дисплея"
+          }
+        }
+      }
+    },
+    "shortcut.windowTopHalf": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top Half"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Верхня половина"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowTopHalf": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to the top half of the display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити у верхню половину дисплея"
+          }
+        }
+      }
+    },
+    "shortcut.windowBottomHalf": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bottom Half"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нижня половина"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowBottomHalf": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to the bottom half of the display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити в нижню половину дисплея"
+          }
+        }
+      }
+    },
+    "shortcut.windowTopLeft": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top Left Quarter"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Верхній лівий кут"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowTopLeft": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to the top-left quarter of the display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити у верхню ліву чверть дисплея"
+          }
+        }
+      }
+    },
+    "shortcut.windowTopRight": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top Right Quarter"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Верхній правий кут"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowTopRight": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to the top-right quarter of the display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити у верхню праву чверть дисплея"
+          }
+        }
+      }
+    },
+    "shortcut.windowBottomLeft": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bottom Left Quarter"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нижній лівий кут"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowBottomLeft": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to the bottom-left quarter of the display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити у нижню ліву чверть дисплея"
+          }
+        }
+      }
+    },
+    "shortcut.windowBottomRight": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bottom Right Quarter"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нижній правий кут"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowBottomRight": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to the bottom-right quarter of the display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити у нижню праву чверть дисплея"
+          }
+        }
+      }
+    },
+    "shortcut.windowFirstThird": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "First Third"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перша третина"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowFirstThird": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to the first third of the display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити у першу третину дисплея"
+          }
+        }
+      }
+    },
+    "shortcut.windowCenterThird": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Center Third"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Середня третина"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowCenterThird": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to the center third of the display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити у середню третину дисплея"
+          }
+        }
+      }
+    },
+    "shortcut.windowLastThird": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last Third"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Остання третина"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowLastThird": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to the last third of the display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити в останню третину дисплея"
+          }
+        }
+      }
+    },
+    "shortcut.windowMaximize": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maximize"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Розгорнути"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowMaximize": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill the usable display area"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заповнити доступну область дисплея"
+          }
+        }
+      }
+    },
+    "shortcut.windowCenter": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Center"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По центру"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowCenter": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Center the window on the display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Розташувати вікно по центру дисплея"
+          }
+        }
+      }
+    },
+    "shortcut.windowRestore": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore Previous Size"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відновити попередній розмір"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowRestore": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore the window’s previous size and position"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відновити попередні розмір і розташування вікна"
+          }
+        }
+      }
+    },
+    "shortcut.windowNextDisplay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next Display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Наступний дисплей"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowNextDisplay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move the window to the next display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити вікно на наступний дисплей"
+          }
+        }
+      }
+    },
+    "shortcut.windowPreviousDisplay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous Display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Попередній дисплей"
+          }
+        }
+      }
+    },
+    "shortcut.description.windowPreviousDisplay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move the window to the previous display"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити вікно на попередній дисплей"
+          }
+        }
+      }
+    },
+    "settings.shortcutUnavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unavailable: another app or macOS is using this shortcut. Choose another, or close the conflicting app and toggle window management off and on."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Недоступне: це сполучення використовує інша програма або macOS. Виберіть інше або закрийте програму, що спричиняє конфлікт, і вимкніть та знову ввімкніть керування вікнами."
+          }
+        }
+      }
+    },
+    "settings.welcome": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to Murinook"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Знайомство з Murinook"
+          }
+        }
+      }
+    },
+    "settings.welcomeDetail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explore Clipboard, File Shelf and Window Management again."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дізнайтеся більше про буфер обміну, полицю файлів і керування вікнами."
+          }
+        }
+      }
+    },
+    "settings.showWelcome": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show welcome"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показати знайомство"
+          }
+        }
+      }
+    },
+    "settings.permission.request": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Request access"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запросити доступ"
+          }
+        }
+      }
+    },
+    "settings.permission.check": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check access"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перевірити доступ"
+          }
+        }
+      }
+    },
+    "settings.permission.openSettings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open System Settings"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відкрити Системні параметри"
+          }
+        }
+      }
+    },
+    "settings.clipboard.enabled": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable Clipboard"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Увімкнути буфер обміну"
+          }
+        }
+      }
+    },
+    "settings.clipboard.enabledDetail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep a searchable history of what you copy."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зберігайте історію скопійованого з можливістю пошуку."
+          }
+        }
+      }
+    },
+    "settings.shelf.enabled": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable File Shelf"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Увімкнути полицю файлів"
+          }
+        }
+      }
+    },
+    "settings.shelf.enabledDetail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carry files and other items between apps with a temporary shelf."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переносьте файли та інші елементи між програмами за допомогою тимчасової полиці."
           }
         }
       }

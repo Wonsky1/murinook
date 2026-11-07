@@ -8,6 +8,8 @@ public struct SettingsActions {
     public var showAccessibilityHelp: () -> Void
     public var requestPostEventAccess: () -> Bool
     public var hasPostEventAccess: () -> Bool
+    public var hasWindowAccessibilityAccess: () -> Bool
+    public var requestWindowAccessibilityAccess: () -> Bool
     public var openLoginItemsSettings: () -> Void
     public var setDockIconVisible: (Bool) -> Void
     public var setLaunchAtLogin: (Bool) -> Void
@@ -18,12 +20,16 @@ public struct SettingsActions {
     public var setAutomaticUpdateChecks: (Bool) -> Void
     public var openUpdatePage: (AppRelease) -> Void
     public var downloadUpdate: (AppRelease) -> Void
+    public var isShortcutUnavailable: (ShortcutAction) -> Bool
+    public var showWelcome: () -> Void
 
     public init(chooseExcludedApps: @escaping () -> Void = {}, recordShortcut: @escaping (ShortcutAction) -> Void = { _ in },
                 resetShortcut: @escaping (ShortcutAction) -> Void = { _ in },
                 disableShortcut: @escaping (ShortcutAction) -> Void = { _ in },
                 showAccessibilityHelp: @escaping () -> Void = {}, requestPostEventAccess: @escaping () -> Bool = { false },
                 hasPostEventAccess: @escaping () -> Bool = { false },
+                hasWindowAccessibilityAccess: @escaping () -> Bool = { false },
+                requestWindowAccessibilityAccess: @escaping () -> Bool = { false },
                 openLoginItemsSettings: @escaping () -> Void = {}, setDockIconVisible: @escaping (Bool) -> Void = { _ in },
                 setLaunchAtLogin: @escaping (Bool) -> Void = { _ in },
                 clearUnpinnedHistory: @escaping () -> Void = {},
@@ -41,11 +47,14 @@ public struct SettingsActions {
                     if combination.modifiers.contains(.command) { result += "⌘" }
                     let keys: [UInt32: String] = [0: "A", 1: "S", 6: "Z", 9: "V", 11: "B"]
                     return result + (keys[combination.keyCode] ?? "Key \(combination.keyCode)")
-                }) {
+                }, isShortcutUnavailable: @escaping (ShortcutAction) -> Bool = { _ in false },
+                showWelcome: @escaping () -> Void = {}) {
         self.chooseExcludedApps = chooseExcludedApps; self.recordShortcut = recordShortcut
         self.resetShortcut = resetShortcut; self.disableShortcut = disableShortcut
         self.showAccessibilityHelp = showAccessibilityHelp; self.requestPostEventAccess = requestPostEventAccess
         self.hasPostEventAccess = hasPostEventAccess
+        self.hasWindowAccessibilityAccess = hasWindowAccessibilityAccess
+        self.requestWindowAccessibilityAccess = requestWindowAccessibilityAccess
         self.openLoginItemsSettings = openLoginItemsSettings; self.setDockIconVisible = setDockIconVisible
         self.setLaunchAtLogin = setLaunchAtLogin
         self.clearUnpinnedHistory = clearUnpinnedHistory
@@ -55,5 +64,7 @@ public struct SettingsActions {
         self.setAutomaticUpdateChecks = setAutomaticUpdateChecks
         self.openUpdatePage = openUpdatePage
         self.downloadUpdate = downloadUpdate
+        self.isShortcutUnavailable = isShortcutUnavailable
+        self.showWelcome = showWelcome
     }
 }

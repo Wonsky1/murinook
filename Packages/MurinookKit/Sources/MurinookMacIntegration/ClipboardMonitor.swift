@@ -87,6 +87,7 @@ public final class ClipboardMonitor {
     private var timer: Timer?
     private var continuation: AsyncStream<ClipboardSnapshot>.Continuation?
     private var lastSeenChangeCount: Int
+    private var activeSessionID: UUID?
 
     public init(pasteboard: NSPasteboard = .general, policy: ClipboardCapturePolicy, writeRegistry: ClipboardWriteRegistry, bookmarkAdapter: BookmarkAdapter? = nil) {
         self.pasteboard = pasteboard
@@ -100,31 +101,42 @@ public final class ClipboardMonitor {
 
     public func start(pollInterval: TimeInterval = 0.25) -> AsyncStream<ClipboardSnapshot> {
         stop()
+        let sessionID = UUID()
+        activeSessionID = sessionID
+        // Resuming observes future copies only; disabled-interval contents are
+        // deliberately outside history, even when the monitor object survives.
+        lastSeenChangeCount = pasteboard.changeCount
         // Clipboard generations are history events; a slow consumer must not silently lose them.
         let (stream, continuation) = AsyncStream<ClipboardSnapshot>.makeStream(bufferingPolicy: .unbounded)
         self.continuation = continuation
         let timer = Timer(timeInterval: max(0.05, pollInterval), repeats: true) { [weak self] _ in
-            Task { @MainActor in self?.poll() }
+            Task { @MainActor in self?.poll(sessionID: sessionID) }
         }
         RunLoop.main.add(timer, forMode: .common)
         self.timer = timer
         continuation.onTermination = { [weak self] _ in
-            Task { @MainActor in self?.stop() }
+            Task { @MainActor in
+                guard let self, self.activeSessionID == sessionID else { return }
+                self.stop()
+            }
         }
         return stream
     }
 
     public func stop() {
+        activeSessionID = nil
         timer?.invalidate()
         timer = nil
-        continuation?.finish()
+        let endingContinuation = continuation
         continuation = nil
+        endingContinuation?.finish()
     }
 
     /// Register the generation created by the paired content writer.
     public func suppressSelfWrite(changeCount: Int) { writeRegistry.record(changeCount) }
 
-    private func poll() {
+    private func poll(sessionID: UUID) {
+        guard activeSessionID == sessionID else { return }
         let generation = pasteboard.changeCount
         guard generation != lastSeenChangeCount else { return }
         lastSeenChangeCount = generation

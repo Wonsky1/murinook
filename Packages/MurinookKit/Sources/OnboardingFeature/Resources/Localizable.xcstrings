@@ -33,22 +33,6 @@
         }
       }
     },
-    "onboarding.enablePaste": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Set up paste"
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Налаштувати вставлення"
-          }
-        }
-      }
-    },
     "onboarding.eyebrow": {
       "localizations": {
         "en": {
@@ -70,7 +54,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Finish setup"
+            "value": "Finish"
           }
         },
         "uk": {
@@ -81,34 +65,18 @@
         }
       }
     },
-    "onboarding.permissionExplanation": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "To paste into another app, Murinook needs Accessibility permission so it can send the standard Command-V keystroke. A paste command cannot confirm that the other app inserted the item."
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Щоб вставляти в інші програми, Murinook потрібен дозвіл «Універсальний доступ» для надсилання звичайного сполучення Command-V. Команда не може підтвердити, що інша програма вставила елемент."
-          }
-        }
-      }
-    },
     "onboarding.permissionSettings": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open Accessibility settings"
+            "value": "Open Accessibility Settings"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Відкрити налаштування універсального доступу"
+            "value": "Відкрити Спеціальні можливості"
           }
         }
       }
@@ -134,29 +102,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Skip setup"
+            "value": "Finish setup"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Пропустити налаштування"
-          }
-        }
-      }
-    },
-    "settings.capture": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clipboard capture"
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Збір буфера обміну"
+            "value": "Завершити налаштування"
           }
         }
       }
@@ -166,13 +118,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A calm place for copied things"
+            "value": "A little more room to work"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Спокійне місце для скопійованого"
+            "value": "Трохи більше простору для роботи"
           }
         }
       }
@@ -182,13 +134,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your clipboard, with a memory"
+            "value": "Clipboard"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Буфер обміну, який пам’ятає"
+            "value": "Буфер обміну"
           }
         }
       }
@@ -198,13 +150,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A temporary place to park things"
+            "value": "File Shelf"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Тимчасове місце для речей"
+            "value": "Полиця файлів"
           }
         }
       }
@@ -214,13 +166,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Paste a few things in order"
+            "value": "Window Management"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Вставляйте кілька речей по черзі"
+            "value": "Керування вікнами"
           }
         }
       }
@@ -230,13 +182,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Murinook keeps clipboard history, a drag shelf and a short paste queue close at hand."
+            "value": "Murinook brings your clipboard, a temporary file shelf and window shortcuts together. Choose what fits your day."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Murinook зберігає історію буфера обміну, полицю для перетягування та коротку чергу вставлення."
+            "value": "Murinook поєднує історію буфера обміну, тимчасову полицю файлів і комбінації клавіш для вікон. Виберіть те, що вам потрібно."
           }
         }
       }
@@ -246,13 +198,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Supported copies are saved on this Mac. Pause capture or exclude sensitive apps any time."
+            "value": "Find something you copied earlier, then copy it again or paste it into another app."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Підтримувані копії зберігаються на цьому Mac. Збір можна призупинити або виключити чутливі програми."
+            "value": "Знайдіть те, що копіювали раніше, а потім скопіюйте знову або вставте в іншу програму."
           }
         }
       }
@@ -262,13 +214,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Drag supported content to the screen edge. The shelf stays open after a drop and can be hidden to a small handle."
+            "value": "A temporary place to hold files and other content while you move between apps. Drag items in, then drag them to their destination."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Перетягніть підтримуваний вміст до краю екрана. Після додавання полиця залишиться відкритою; її можна згорнути до маленької кнопки."
+            "value": "Тимчасове місце для файлів та іншого вмісту, поки ви переходите між програмами. Перетягніть елементи на полицю, а потім — туди, де вони потрібні."
           }
         }
       }
@@ -278,13 +230,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Add clips to the queue and rearrange them before sending each paste command."
+            "value": "Arrange the active app’s window with familiar Rectangle-style keyboard shortcuts."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Додавайте фрагменти до черги й змінюйте порядок перед кожною командою вставлення."
+            "value": "Розташовуйте вікно активної програми за допомогою знайомих комбінацій клавіш у стилі Rectangle."
           }
         }
       }
@@ -358,13 +310,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your copies stay on this Mac"
+            "value": "Your history and preferences stay on this Mac."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Копії залишаються на цьому Mac"
+            "value": "Історія та налаштування зберігаються на цьому Mac."
           }
         }
       }
@@ -374,29 +326,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No account or sync required"
+            "value": "Three tools, each with its own on/off switch."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Обліковий запис і синхронізація не потрібні"
-          }
-        }
-      }
-    },
-    "onboarding.bullet.0.2": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You control capture and retention"
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ви керуєте збором і терміном зберігання"
+            "value": "Три інструменти, кожен із власним перемикачем."
           }
         }
       }
@@ -406,13 +342,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Search text, titles, tags and notes"
+            "value": "Keep text, links, images and files in a searchable history."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Шукайте текст, назви, теги й нотатки"
+            "value": "Зберігайте текст, посилання, зображення й файли в історії з пошуком."
           }
         }
       }
@@ -422,13 +358,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pin important items and make collections"
+            "value": "Pin useful items and open Quick Access when you need them."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Закріплюйте важливе й створюйте добірки"
+            "value": "Закріплюйте потрібні елементи та відкривайте Швидкий доступ, коли вони знадобляться."
           }
         }
       }
@@ -438,13 +374,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Drag files, images, text and links"
+            "value": "The shelf can appear automatically during supported drags."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Перетягуйте файли, зображення, текст і посилання"
+            "value": "Полиця може з’являтися автоматично під час перетягування підтримуваного вмісту."
           }
         }
       }
@@ -454,29 +390,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Group and reorder shelf items"
+            "value": "Hide a populated shelf to its edge handle; click to restore it."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Групуйте й переставляйте елементи"
-          }
-        }
-      }
-    },
-    "onboarding.bullet.2.2": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removing a shelf item never deletes its original file"
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Вилучення з полиці не видаляє оригінальний файл"
+            "value": "Сховайте заповнену полицю в кнопку на краю екрана й натисніть її, щоб розгорнути."
           }
         }
       }
@@ -486,13 +406,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reorder the queue any time"
+            "value": "By default, Control–Option–← / → fills the left or right half."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Змінюйте порядок черги будь-коли"
+            "value": "За замовчуванням Control–Option–← / → розташовує вікно в лівій або правій половині."
           }
         }
       }
@@ -502,29 +422,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A failed dispatch leaves the item in place"
+            "value": "Use more layouts and customize shortcuts in Settings."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Після невдалої команди елемент залишиться на місці"
-          }
-        }
-      }
-    },
-    "onboarding.bullet.3.2": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copy is always available as a fallback"
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Копіювання завжди доступне як запасний варіант"
+            "value": "Використовуйте інші макети й змінюйте комбінації клавіш у Налаштуваннях."
           }
         }
       }
@@ -785,54 +689,6 @@
         }
       }
     },
-    "onboarding.requiredPermissionTitle": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Allow Murinook to send paste commands"
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Дозвольте Murinook надсилати команди вставлення"
-          }
-        }
-      }
-    },
-    "onboarding.requiredPermissionMessage": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Murinook needs Accessibility access to send paste commands in other apps. Setup and clipboard capture will continue automatically as soon as macOS recognizes access."
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Murinook потрібен дозвіл «Універсальний доступ», щоб надсилати команди вставлення в інші програми. Налаштування та збір буфера обміну продовжаться автоматично, щойно macOS розпізнає дозвіл."
-          }
-        }
-      }
-    },
-    "onboarding.requiredPermissionInstructions": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "In System Settings, open Privacy & Security → Accessibility and turn on Murinook. If it is not listed, add Murinook with the + button. If it is already on but access is not recognized, remove Murinook, add the copy from Applications again, then quit and reopen Murinook."
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "У системних параметрах відкрийте «Приватність і безпека» → «Універсальний доступ» і ввімкніть Murinook. Якщо програми немає у списку, додайте її кнопкою «+». Якщо доступ уже ввімкнено, але програма його не розпізнає, видаліть Murinook, знову додайте копію з теки «Програми», а потім завершіть роботу й відкрийте Murinook знову."
-          }
-        }
-      }
-    },
     "onboarding.checkPermission": {
       "localizations": {
         "en": {
@@ -849,18 +705,162 @@
         }
       }
     },
-    "onboarding.permissionRequired": {
+    "onboarding.enabled.1": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Grant this permission to continue setup."
+            "value": "Enable Clipboard"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Надайте цей дозвіл, щоб продовжити налаштування."
+            "value": "Увімкнути буфер обміну"
+          }
+        }
+      }
+    },
+    "onboarding.enabled.2": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable File Shelf"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Увімкнути полицю файлів"
+          }
+        }
+      }
+    },
+    "onboarding.enabled.3": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable Window Management"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Увімкнути керування вікнами"
+          }
+        }
+      }
+    },
+    "onboarding.changeLater": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can change this in Settings. Turning it off keeps your saved items."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Це можна змінити в Налаштуваннях. Вимкнення зберігає ваші елементи."
+          }
+        }
+      }
+    },
+    "onboarding.access.paste": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Access is needed to paste into other apps. Clipboard history and Copy work without it."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Доступ потрібен для вставлення в інші програми. Історія буфера обміну й копіювання працюють без нього."
+          }
+        }
+      }
+    },
+    "onboarding.access.windows": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accessibility access is needed to move and resize other apps’ windows."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Доступ до Спеціальних можливостей потрібен для переміщення та зміни розміру вікон інших програм."
+          }
+        }
+      }
+    },
+    "onboarding.access.granted": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Access is available."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Доступ надано."
+          }
+        }
+      }
+    },
+    "onboarding.access.missing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Access is not available yet. You can continue and set it up later."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Доступ ще не надано. Ви можете продовжити й налаштувати його пізніше."
+          }
+        }
+      }
+    },
+    "onboarding.access.unknown": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check access when you’re ready."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перевірте доступ, коли будете готові."
+          }
+        }
+      }
+    },
+    "onboarding.access.request": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow access…"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Надати доступ…"
           }
         }
       }

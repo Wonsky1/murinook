@@ -2,18 +2,34 @@ import MurinookUseCases
 import MurinookDomain
 import MurinookDesignSystem
 import MurinookMacIntegration
+import WindowManagementFeature
 import AppKit
 import SwiftUI
 
 struct MenuBarContent: View {
     let controller: ApplicationController
     @Environment(\.dismiss) private var dismiss
+    @State private var showsWindowActions = false
     private var preferences: AppPreferences { controller.services.preferences.value }
     private var locale: Locale { preferences.languageCode.map(Locale.init(identifier:)) ?? .current }
     private func label(_ key: String) -> String { AppStrings.text(key, locale: locale) }
 
     var body: some View {
         FeatureEnvironment(preferences: controller.services.preferences) {
+            if showsWindowActions {
+                WindowActionsMenu(enabled: preferences.windowManagementEnabled,
+                    shortcut: { action in
+                        guard let key = ShortcutAction.windowActions.first(where: { $0.windowAction == action }),
+                              let combination = preferences.shortcuts[key] else { return nil }
+                        return ShortcutDescriptionFormatter.string(for: combination)
+                    }, perform: { action in
+                        dismiss()
+                        controller.windowActions.perform(action)
+                    }, settings: {
+                        dismiss()
+                        controller.windows.showWindowManagementSettings()
+                    }, back: { showsWindowActions = false })
+            } else {
             VStack(spacing: 0) {
                 HStack(spacing: 10) {
                     MurinookBrandMark(size: 29)
@@ -26,7 +42,7 @@ struct MenuBarContent: View {
                     Circle().fill(preferences.captureEnabled ? MurinookPalette.accent : MurinookPalette.warm)
                         .frame(width: 6, height: 6).accessibilityHidden(true)
                 }.padding(16)
-                if let clip = controller.services.history.clips.max(by: { $0.lastCopiedAt < $1.lastCopiedAt }) {
+                if preferences.clipboardEnabled, let clip = controller.services.history.clips.max(by: { $0.lastCopiedAt < $1.lastCopiedAt }) {
                     latestCopy(clip)
                 }
                 separator
@@ -35,18 +51,32 @@ struct MenuBarContent: View {
                     row("Try again", symbol: "arrow.clockwise") { Task { await controller.start() } }
                 }
                 VStack(spacing: 0) {
-                    row("Quick access", symbol: "magnifyingglass", shortcut: .quickAccess, action: controller.windows.showQuick)
-                    row("Library", symbol: "square.grid.2x2", shortcut: .library, action: controller.windows.showLibrary)
-                    row("Show shelf", symbol: "tray", count: controller.services.shelf.items.count, action: controller.windows.shelf.show)
-                    row("Paste queue", symbol: "rectangle.stack", count: controller.services.queue.entries.count, action: controller.windows.showQueue)
-                    row("Paste next", symbol: "arrow.right", shortcut: .pasteNext) { controller.perform(.pasteNext) }
-                        .disabled(controller.services.queue.next == nil)
+                    if preferences.clipboardEnabled {
+                        row("Quick access", symbol: "magnifyingglass", shortcut: .quickAccess, action: controller.windows.showQuick)
+                        row("Library", symbol: "square.grid.2x2", shortcut: .library, action: controller.windows.showLibrary)
+                        row("Paste queue", symbol: "rectangle.stack", count: controller.services.queue.entries.count, action: controller.windows.showQueue)
+                        row("Paste next", symbol: "arrow.right", shortcut: .pasteNext) { controller.perform(.pasteNext) }
+                            .disabled(controller.services.queue.next == nil)
+                    }
+                    if preferences.shelfEnabled {
+                        row("Show shelf", symbol: "tray", count: controller.services.shelf.items.count, action: controller.windows.shelf.show)
+                    }
+                    Button { showsWindowActions = true } label: {
+                        HStack(spacing: 9) {
+                            Image(systemName: "rectangle.split.2x1").frame(width: 18).accessibilityHidden(true)
+                            Text(label("window.title"))
+                            Spacer()
+                            Image(systemName: "chevron.right").font(.system(size: 9)).accessibilityHidden(true)
+                        }.font(.system(size: 12)).padding(.horizontal, 13).frame(minHeight: 33).contentShape(Rectangle())
+                    }.buttonStyle(MenuRowStyle())
                     separator.padding(.vertical, 5)
-                    row(preferences.captureEnabled ? "Pause capture" : "Resume capture", symbol: preferences.captureEnabled ? "pause" : "play") {
-                        controller.services.preferences.update { $0.captureEnabled.toggle() }
+                    if preferences.clipboardEnabled {
+                        row(preferences.captureEnabled ? "Pause capture" : "Resume capture", symbol: preferences.captureEnabled ? "pause" : "play") {
+                            controller.services.preferences.update { $0.captureEnabled.toggle() }
+                        }
                     }
                     row("Settings", symbol: "gearshape", action: controller.windows.showSettings)
-                }.disabled(!controller.isReady || !controller.services.permission.hasPostEventAccess)
+                }.disabled(!controller.isReady)
                 separator.padding(.vertical, 5)
                 if case .available(let release) = controller.updates.store.state {
                     HStack(spacing: 8) {
@@ -65,6 +95,7 @@ struct MenuBarContent: View {
                 row("Quit Murinook", symbol: "power") { NSApp.terminate(nil) }
             }.padding(.bottom, 7).frame(width: 282)
                 .foregroundStyle(MurinookPalette.text).background(MurinookPalette.surface)
+            }
         }
     }
 

@@ -11,15 +11,18 @@ final class ClipboardCaptureController {
     init(services: ApplicationServices) { self.services = services }
 
     func start() {
+        guard task == nil else { return }
         let stream = services.monitor.start()
         task = Task {
             for await snapshot in stream {
                 guard !Task.isCancelled else { break }
+                guard services.preferences.value.clipboardEnabled else { continue }
                 let source = SourceApplication(name: snapshot.sourceApplicationName ?? "",
                     bundleIdentifier: snapshot.sourceBundleIdentifier)
                 for content in snapshot.toContents() {
                     await services.contentAccess.withAccess {
                         let decorated = await services.visuals.addingVisuals(to: content)
+                        guard services.preferences.value.clipboardEnabled, !Task.isCancelled else { return }
                         await services.history.capture(decorated, source: source)
                     }
                 }
