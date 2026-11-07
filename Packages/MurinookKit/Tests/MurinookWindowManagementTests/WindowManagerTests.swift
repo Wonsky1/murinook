@@ -178,6 +178,76 @@ final class WindowManagerTests: XCTestCase {
         XCTAssertTrue(records.allSatisfy { Set($0.fields.keys).isSubset(of: allowedKeys) })
     }
 
+    func testCalendarMinimumWidthIsAlignedInsideScreenAndOriginalCanBeRestored() throws {
+        let system = FakeWindowSystem()
+        system.displays = [WindowDisplay(id: 1, frame: CGRect(x: 0, y: 0, width: 1352, height: 878),
+            visibleFrame: CGRect(x: 0, y: 30, width: 1352, height: 848))]
+        system.minimumSize = CGSize(width: 918, height: 400)
+        system.frame = CGRect(x: 100, y: 80, width: 1000, height: 700)
+        let initial = system.frame
+        let manager = WindowManager(system: system)
+        try manager.execute(.rightHalf)
+        XCTAssertEqual(system.frame, CGRect(x: 434, y: 30, width: 918, height: 848))
+        try manager.execute(.leftHalf)
+        XCTAssertEqual(system.frame, CGRect(x: 0, y: 30, width: 918, height: 848))
+        try manager.execute(.restore)
+        XCTAssertEqual(system.frame, initial)
+    }
+
+    func testQuarterHonorsBothMinimumDimensionsAndRequestedCorner() throws {
+        let system = FakeWindowSystem()
+        system.minimumSize = CGSize(width: 918, height: 600)
+        let manager = WindowManager(system: system)
+        try manager.execute(.bottomRight)
+        XCTAssertEqual(system.frame, CGRect(x: 522, y: 274, width: 918, height: 600))
+    }
+
+    func testCenterThirdCentersMinimumWidthOnOffsetDisplay() throws {
+        let system = FakeWindowSystem()
+        system.displays = [WindowDisplay(id: 1, frame: CGRect(x: -1440, y: -900, width: 1440, height: 900),
+            visibleFrame: CGRect(x: -1440, y: -876, width: 1440, height: 850))]
+        system.frame = CGRect(x: -1400, y: -800, width: 1000, height: 700)
+        system.minimumSize = CGSize(width: 918, height: 400)
+        let manager = WindowManager(system: system)
+        try manager.execute(.centerThird)
+        XCTAssertEqual(system.frame, CGRect(x: -1179, y: -876, width: 918, height: 850))
+    }
+
+    func testIntermediateAnimationFrameIsNotMisclassifiedAsMinimumSize() {
+        let system = FakeWindowSystem()
+        system.writeTransform = { _ in CGRect(x: 0, y: 401, width: 916, height: 444) }
+        let manager = WindowManager(system: system)
+        assertError(.operationFailed) { try manager.execute(.leftHalf) }
+        XCTAssertEqual(system.writeCount, 1)
+    }
+
+    func testUnchangedLargerFrameDoesNotTurnSilentRejectionIntoConstraintSuccess() {
+        let system = FakeWindowSystem()
+        system.frame = CGRect(x: 0, y: 24, width: 1000, height: 850)
+        system.ignoreWrites = true
+        let manager = WindowManager(system: system)
+        assertError(.operationFailed) { try manager.execute(.leftHalf) }
+    }
+
+    func testRepeatingVerifiedConstrainedPlacementRemainsUsable() throws {
+        let system = FakeWindowSystem()
+        system.minimumSize = CGSize(width: 918, height: 400)
+        let manager = WindowManager(system: system)
+        let first = try manager.execute(.leftHalf)
+        let repeated = try manager.execute(.leftHalf)
+        XCTAssertEqual(first, .sizeConstrained(frame: CGRect(x: 0, y: 24, width: 918, height: 850)))
+        XCTAssertEqual(repeated, first)
+    }
+
+    func testConstrainedPlacementStillRequiresPositionWriteToSucceed() {
+        let system = FakeWindowSystem()
+        system.minimumSize = CGSize(width: 918, height: 400)
+        // The initial resize works, but the app ignores the alignment correction.
+        system.writeTransform = { frame in CGRect(x: 720, y: frame.minY, width: frame.width, height: frame.height) }
+        let manager = WindowManager(system: system)
+        assertError(.operationFailed) { try manager.execute(.rightHalf) }
+    }
+
     private func assertError(_ expected: WindowManagementError, _ operation: () throws -> Void, file: StaticString = #filePath, line: UInt = #line) {
         XCTAssertThrowsError(try operation(), file: file, line: line) { error in
             XCTAssertEqual(error as? WindowManagementError, expected, file: file, line: line)
@@ -206,6 +276,8 @@ private final class FakeWindowSystem: WindowSystem {
     var frame = CGRect(x: 120, y: 100, width: 640, height: 500)
     var stateOverride: WindowState?
     var canResize = true
+    var minimumSize: CGSize?
+    var writeTransform: ((CGRect) -> CGRect)?
     var invalidWindowIDs: Set<Int> = []
     var lastWrittenWindow: FakeWindowReference?
     var writeCount = 0
@@ -234,7 +306,11 @@ private final class FakeWindowSystem: WindowSystem {
         lastWrittenWindow = window as? FakeWindowReference
         if failNextWrite { failNextWrite = false; throw WindowManagementError.operationFailed }
         if ignoreWrites { return }
-        self.frame = frame
+        var accepted = frame
+        if let minimumSize {
+            accepted.size = CGSize(width: max(frame.width, minimumSize.width), height: max(frame.height, minimumSize.height))
+        }
+        self.frame = writeTransform?(accepted) ?? accepted
         if partiallyFailNextWrite { partiallyFailNextWrite = false; throw WindowManagementError.operationFailed }
     }
     func observeApplications(_ callback: @escaping @MainActor (WindowApplication) -> Void) { activationChanged = callback }

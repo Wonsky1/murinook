@@ -91,6 +91,28 @@ final class AccessibilityWindowSystem: WindowSystem {
 
     func setFrame(_ desired: CGRect, of window: any WindowReference) throws {
         let element = try nativeElement(window)
+        let app = AXUIElementCreateApplication(window.processIdentifier)
+        AXUIElementSetMessagingTimeout(app, 0.2)
+        try AccessibilityFrameAdjustment.perform(readEnhancedUI: {
+            var value: CFTypeRef?
+            let status = AXUIElementCopyAttributeValue(app, "AXEnhancedUserInterface" as CFString, &value)
+            let enabled = status == .success ? value as? Bool : nil
+            self.diagnostics(WindowManagementDiagnostic(stage: "enhancedUIRead", fields:
+                ["targetPID": String(window.processIdentifier), "enabled": enabled.map(String.init) ?? "unknown",
+                 "status": String(status.rawValue)]))
+            return enabled
+        }, writeEnhancedUI: { enabled in
+            let status = AXUIElementSetAttributeValue(app, "AXEnhancedUserInterface" as CFString,
+                enabled ? kCFBooleanTrue : kCFBooleanFalse)
+            self.diagnostics(WindowManagementDiagnostic(stage: "enhancedUIWrite", fields:
+                ["targetPID": String(window.processIdentifier), "enabled": String(enabled), "status": String(status.rawValue)]))
+            return status == .success
+        }) {
+            try writeFrame(desired, to: element, processIdentifier: window.processIdentifier)
+        }
+    }
+
+    private func writeFrame(_ desired: CGRect, to element: AXUIElement, processIdentifier: Int32) throws {
         let initial = try frame(of: element)
         if initial.size != desired.size { try setSize(desired.size, of: element) }
         if initial.origin != desired.origin { try setPosition(desired.origin, of: element) }
@@ -98,7 +120,7 @@ final class AccessibilityWindowSystem: WindowSystem {
         // transfer. Retry once on the destination, then let the manager verify.
         let actual = try frame(of: element)
         diagnostics(WindowManagementDiagnostic(stage: "frameNativeObserved", fields:
-            ["targetPID": String(window.processIdentifier)]
+            ["targetPID": String(processIdentifier)]
                 .merging(WindowManagementDiagnostic.frameFields(actual, prefix: "actual")) { _, new in new }))
         if abs(actual.width - desired.width) > 2 || abs(actual.height - desired.height) > 2 {
             try setSize(desired.size, of: element)

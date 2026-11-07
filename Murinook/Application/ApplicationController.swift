@@ -34,7 +34,7 @@ import MurinookDomain
         maintenance = ContentMaintenanceController(services: services)
         errors = ErrorPresenter(preferences: services.preferences, diagnostics: services.diagnostics)
         windowActions = WindowActionsController(manager: services.windowManager,
-            preferences: services.preferences, errors: errors)
+            preferences: services.preferences, errors: errors, notice: WindowPlacementNotice())
         router = ContentActionRouter(services: services, errors: errors)
         effects = PreferencesEffectsController(services: services, errors: errors)
         let transfers = ShelfTransferController(services: services, errors: errors)
@@ -92,7 +92,7 @@ import MurinookDomain
         windows.showLaunchExperience()
     }
 
-    func stop() { windows.stop(); updates.stop(); router.stop(); maintenance.stop(); visualBackfill.stop(); capture.stop(); services.dragMonitor.stop(); services.windowManager.stop(); services.bookmarks.releaseAllAccess() }
+    func stop() { windows.stop(); windowActions.stop(); updates.stop(); router.stop(); maintenance.stop(); visualBackfill.stop(); capture.stop(); services.dragMonitor.stop(); services.windowManager.stop(); services.bookmarks.releaseAllAccess() }
 
     func perform(_ action: ShortcutAction) {
         if let windowAction = action.windowAction {

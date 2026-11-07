@@ -41,6 +41,32 @@ enum WindowGeometry {
         }
     }
 
+    /// Apps can enforce a larger minimum size than a tile. Accept only a
+    /// completed resize (neither dimension smaller than requested), and anchor
+    /// the accepted size to the action's edge without moving it off-screen.
+    static func constrainedFrame(for action: WindowAction, requested: CGRect, accepted: CGRect, visible: CGRect) -> CGRect? {
+        let tolerance: CGFloat = 2
+        guard isUsable(accepted), isUsable(visible),
+              accepted.width >= requested.width - tolerance, accepted.height >= requested.height - tolerance,
+              accepted.width > requested.width + tolerance || accepted.height > requested.height + tolerance,
+              accepted.width <= visible.width, accepted.height <= visible.height else { return nil }
+        var frame = CGRect(origin: visible.origin, size: accepted.size)
+        switch action {
+        case .rightHalf, .topRight, .bottomRight, .lastThird:
+            frame.origin.x = visible.maxX - frame.width
+        case .centerThird:
+            frame.origin.x = visible.midX - frame.width / 2
+        case .leftHalf, .topHalf, .bottomHalf, .topLeft, .bottomLeft, .firstThird, .maximize:
+            break
+        case .center, .restore, .nextDisplay, .previousDisplay:
+            return nil
+        }
+        if action == .bottomHalf || action == .bottomLeft || action == .bottomRight {
+            frame.origin.y = visible.maxY - frame.height
+        }
+        return frame
+    }
+
     static func display(for frame: CGRect, among displays: [WindowDisplay]) throws -> WindowDisplay {
         guard let match = displays.max(by: { lhs, rhs in
             let leftArea = intersectionArea(frame, lhs.frame)

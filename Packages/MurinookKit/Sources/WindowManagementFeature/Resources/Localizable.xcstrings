@@ -442,6 +442,23 @@
           }
         }
       }
+    },
+    "window.notice.minimumSize": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minimum window size reached"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Досягнуто мінімального розміру вікна"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

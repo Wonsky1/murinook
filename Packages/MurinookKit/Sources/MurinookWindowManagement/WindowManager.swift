@@ -10,6 +10,7 @@ public final class WindowManager {
         let window: any WindowReference
         let frame: CGRect
         let displays: [WindowDisplay]
+        var constrainedPlacement: CGRect?
     }
 
     private let system: any WindowSystem
@@ -37,7 +38,8 @@ public final class WindowManager {
     @discardableResult
     public func requestAccessibilityAccess() -> Bool { system.requestAccessibilityAccess() }
 
-    public func execute(_ action: WindowAction) throws {
+    @discardableResult
+    public func execute(_ action: WindowAction) throws -> WindowPlacementResult {
         var context = ["command": action.rawValue,
                        "frontmostPID": system.currentApplication.map { String($0.processIdentifier) } ?? "none",
                        "targetPID": lastApplication.map { String($0.processIdentifier) } ?? "none"]
@@ -83,15 +85,38 @@ public final class WindowManager {
             record("frameRequested", WindowManagementDiagnostic.frameFields(destination, prefix: "requested"))
             do {
                 try system.setFrame(destination, of: window)
-                let actual = try system.state(of: window).frame
+                var actual = try system.state(of: window).frame
                 record("frameObserved", WindowManagementDiagnostic.frameFields(actual, prefix: "actual"))
-                guard WindowGeometry.approximatelyEqual(actual, destination) else {
+                var result = WindowPlacementResult.exact
+                if !WindowGeometry.approximatelyEqual(actual, destination),
+                   // An unchanged larger frame alone cannot distinguish a size
+                   // limit from an ignored write. A previous verified placement
+                   // permits repeating that layout without treating it as an error.
+                   (!WindowGeometry.approximatelyEqual(actual, state.frame, tolerance: 0.5)
+                    || original?.constrainedPlacement.map { WindowGeometry.approximatelyEqual($0, actual) } == true),
+                   let constrained = WindowGeometry.constrainedFrame(for: action, requested: destination,
+                       accepted: actual, visible: currentDisplay.visibleFrame) {
+                    record("frameConstrained", WindowManagementDiagnostic.frameFields(constrained, prefix: "adjusted"))
+                    try system.setFrame(constrained, of: window)
+                    actual = try system.state(of: window).frame
+                    record("frameObserved", WindowManagementDiagnostic.frameFields(actual, prefix: "actual"))
+                    guard WindowGeometry.approximatelyEqual(actual, constrained) else {
+                        record("mismatch", WindowManagementDiagnostic.frameFields(constrained, prefix: "requested")
+                            .merging(WindowManagementDiagnostic.frameFields(actual, prefix: "actual")) { _, new in new })
+                        throw WindowManagementError.operationFailed
+                    }
+                    result = .sizeConstrained(frame: actual)
+                }
+                guard result != .exact || WindowGeometry.approximatelyEqual(actual, destination) else {
                     record("mismatch", WindowManagementDiagnostic.frameFields(destination, prefix: "requested")
                         .merging(WindowManagementDiagnostic.frameFields(actual, prefix: "actual")) { _, new in new })
                     throw WindowManagementError.operationFailed
                 }
-                if original == nil { rememberOriginal(state.frame, window: window, application: application, displays: displays) }
+                let constrainedPlacement: CGRect? = if case .sizeConstrained = result { actual } else { nil }
+                rememberOriginal(state.frame, window: window, application: application, displays: displays,
+                    constrainedPlacement: constrainedPlacement)
                 record("success")
+                return result
             } catch {
                 // A rejected position/size write can follow a successful write. Preserve
                 // recovery when changed, or when the result cannot safely be read back.
@@ -152,10 +177,15 @@ public final class WindowManager {
         lastWindow = window
     }
 
-    private func rememberOriginal(_ frame: CGRect, window: any WindowReference, application: WindowApplication, displays: [WindowDisplay]) {
-        guard !originalFrames.contains(where: { $0.application == application && $0.window.isSameWindow(as: window) }) else { return }
+    private func rememberOriginal(_ frame: CGRect, window: any WindowReference, application: WindowApplication,
+                                 displays: [WindowDisplay], constrainedPlacement: CGRect? = nil) {
+        if let index = originalFrames.firstIndex(where: { $0.application == application && $0.window.isSameWindow(as: window) }) {
+            if let constrainedPlacement { originalFrames[index].constrainedPlacement = constrainedPlacement }
+            return
+        }
         originalFrames.removeAll { !system.isAlive($0.application) }
         if originalFrames.count >= restoreLimit { originalFrames.removeFirst() }
-        originalFrames.append(OriginalFrame(application: application, window: window, frame: frame, displays: displays))
+        originalFrames.append(OriginalFrame(application: application, window: window, frame: frame,
+            displays: displays, constrainedPlacement: constrainedPlacement))
     }
 }
