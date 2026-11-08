@@ -194,13 +194,15 @@ final class ShelfTransferController {
         }
     }
 
-    func dragCompleted(_ item: ShelfItem, succeeded: Bool) {
-        services.diagnostics.event("shelf.outgoing.completed", fields: ["item_id": item.id.uuidString,
+    func dragCompleted(_ items: [ShelfItem], succeeded: Bool) {
+        services.diagnostics.event("shelf.outgoing.completed", fields: ["item_count": String(items.count),
             "succeeded": String(succeeded), "auto_remove": String(services.preferences.value.autoRemoveShelfItems)])
         releaseDragAccess()
         services.dragMonitor.isInternalDragActive = false
         if succeeded && services.preferences.value.autoRemoveShelfItems {
-            Task { await services.shelf.completeTransfer([item.id]) }
+            // The store rechecks live lock state inside its serialized mutation,
+            // rather than trusting the snapshot prepared before the gesture.
+            Task { await services.shelf.completeTransfer(Set(items.map(\.id))) }
         }
     }
 

@@ -13,15 +13,16 @@ import MurinookPresentation
     private var itemCount = 0
     private var isEnabled = true
     private(set) var isDragging = false
-    private var side: ShelfSide = .right
-    private var offset: Double = 0.5
+    private var position = ShelfPosition(x: 1, y: 0.5)
+    private var positionLocked = false
+    private var dragOffset: NSPoint?
     private var screen: NSScreen?
     private var preferences: PreferencesStore?
     private var diagnostics: DragDiagnostics?
     private var lastLoggedWindowState: String?
     private let panelVisibility = WindowVisibilityAnimator()
     private let tabVisibility = WindowVisibilityAnimator()
-    var placementChanged: ((ShelfSide, Double) -> Void)?
+    var placementChanged: ((ShelfPosition) -> Void)?
 
     init() {
         panel.closeAction = { [weak self] in self?.hide() }
@@ -30,10 +31,10 @@ import MurinookPresentation
             name: NSApplication.didChangeScreenParametersNotification, object: nil)
     }
 
-    func configure(side: ShelfSide, offset: Double, itemCount: Int, preferences: PreferencesStore, diagnostics: DragDiagnostics? = nil, acceptDrop: @escaping (NSPasteboard) -> Bool,
+    func configure(position: ShelfPosition, positionLocked: Bool, itemCount: Int, preferences: PreferencesStore, diagnostics: DragDiagnostics? = nil, acceptDrop: @escaping (NSPasteboard) -> Bool,
                    isDropEnabled: @escaping () -> Bool, content: @escaping () -> AnyView) {
-        self.side = side
-        self.offset = offset
+        self.position = position
+        self.positionLocked = positionLocked
         self.preferences = preferences
         self.isEnabled = preferences.value.shelfEnabled
         self.diagnostics = diagnostics
@@ -48,9 +49,10 @@ import MurinookPresentation
         updateWindows()
     }
 
-    func updatePlacement(side: ShelfSide, offset: Double) {
-        self.side = side
-        self.offset = offset
+    func updatePlacement(position: ShelfPosition, locked: Bool) {
+        self.position = position
+        positionLocked = locked
+        if locked { dragOffset = nil }
         updateWindows()
     }
 
@@ -61,7 +63,9 @@ import MurinookPresentation
     func externalDragStarted() {
         guard isEnabled else { return }
         diagnostics?.event("shelf.external_drag.started")
-        screen = NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) } ?? NSScreen.main
+        if screen == nil {
+            screen = NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) } ?? NSScreen.main
+        }
         isDragging = true
         state.externalDragStarted()
         updateWindows()
@@ -94,16 +98,28 @@ import MurinookPresentation
         updateWindows()
     }
 
-    func moveAnchor(to point: NSPoint) {
-        guard let target = NSScreen.screens.first(where: { $0.frame.contains(point) }) else { return }
+    func beginMoving(at point: NSPoint) {
+        guard !positionLocked else { return }
+        dragOffset = NSPoint(x: point.x - panel.frame.minX, y: point.y - panel.frame.minY)
+    }
+
+    func move(to point: NSPoint) {
+        guard !positionLocked, let dragOffset,
+              let target = NSScreen.screens.first(where: { $0.frame.contains(point) }) else { return }
         screen = target
-        side = point.x < target.frame.midX ? .left : .right
-        offset = ShelfEdgeGeometry.normalizedOffset(forOrigin: NSPoint(x: point.x, y: point.y - panel.frame.height / 2),
-            in: target.visibleFrame, panelSize: panel.frame.size)
+        let size = NSSize(width: min(ShelfLayout.width, target.visibleFrame.width),
+            height: min(ShelfLayout.height(for: itemCount), target.visibleFrame.height))
+        position = ShelfGeometry.normalizedPosition(
+            forOrigin: NSPoint(x: point.x - dragOffset.x, y: point.y - dragOffset.y),
+            in: target.visibleFrame, panelSize: size)
         updateWindows()
     }
 
-    func finishMoving() { placementChanged?(side, offset) }
+    func finishMoving() {
+        guard dragOffset != nil else { return }
+        dragOffset = nil
+        placementChanged?(position)
+    }
 
     @objc private func screenConfigurationChanged() {
         if !NSScreen.screens.contains(where: { $0 === screen }) { screen = NSScreen.main }
@@ -122,12 +138,16 @@ import MurinookPresentation
         tab.title = AppStrings.text("Restore shelf", locale: locale)
         let bounds = display.visibleFrame
         let panelSize = NSSize(width: min(ShelfLayout.width, bounds.width), height: min(ShelfLayout.height(for: itemCount), bounds.height))
-        let origin = ShelfEdgeGeometry.origin(in: bounds, panelSize: panelSize,
-            side: side == .left ? .left : .right, normalizedOffset: offset)
-        let y = origin.y
+        let origin = ShelfGeometry.origin(in: bounds, panelSize: panelSize, position: position)
         panel.setFrame(NSRect(origin: origin, size: panelSize), display: true)
-        tab.setFrame(NSRect(x: side == .right ? bounds.maxX - 28 : bounds.minX,
-                            y: y + (panelSize.height - 48) / 2, width: 28, height: 48), display: true)
+        // The restore button stays beside the saved shelf location rather than
+        // snapping back to an edge. Its own frame remains within usable bounds.
+        let tabSize = NSSize(width: 32, height: 42)
+        let tabOrigin = NSPoint(x: origin.x + (panelSize.width - tabSize.width) / 2,
+            y: origin.y + (panelSize.height - tabSize.height) / 2)
+        let tabPosition = ShelfGeometry.normalizedPosition(forOrigin: tabOrigin, in: bounds, panelSize: tabSize)
+        tab.setFrame(NSRect(origin: ShelfGeometry.origin(in: bounds, panelSize: tabSize, position: tabPosition),
+            size: tabSize), display: true)
         switch state.mode {
         case .hidden:
             panelVisibility.hide(panel)
@@ -135,7 +155,7 @@ import MurinookPresentation
         case .collapsed:
             if let preferences {
                 tab.contentView = NSHostingView(rootView: FeatureEnvironment(preferences: preferences) {
-                    ShelfRestoreTab(side: self.side, restore: { [weak self] in self?.show() })
+                    ShelfRestoreTab(restore: { [weak self] in self?.show() })
                 })
             }
             panelVisibility.hide(panel)

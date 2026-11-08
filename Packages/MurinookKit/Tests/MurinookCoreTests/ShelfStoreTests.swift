@@ -62,6 +62,69 @@ final class ShelfStoreTests: XCTestCase {
         XCTAssertNotNil(store.error)
     }
 
+    func testLegacyShelfItemDecodesUnlocked() throws {
+        let item = ShelfItem(contentID: UUID(), title: "Old item", kind: .file)
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(item)) as? [String: Any])
+        object.removeValue(forKey: "isLocked")
+
+        let restored = try JSONDecoder().decode(ShelfItem.self, from: JSONSerialization.data(withJSONObject: object))
+        XCTAssertFalse(restored.isLocked)
+        XCTAssertEqual(restored.id, item.id)
+        XCTAssertEqual(restored.contentID, item.contentID)
+    }
+
+    func testLockChangePersistsAndFailedSaveKeepsPublishedValue() async throws {
+        let repository = MemoryShelfRepository()
+        let item = ShelfItem(contentID: UUID(), title: "One", kind: .file)
+        repository.values = [item]
+        let store = ShelfStore(repository: repository, contents: MemoryContentRepository())
+        await store.load()
+
+        await store.setLocked(true, for: item.id)
+        XCTAssertTrue(try XCTUnwrap(repository.values.first).isLocked)
+        XCTAssertTrue(try XCTUnwrap(store.items.first).isLocked)
+
+        repository.shouldFail = true
+        await store.setLocked(false, for: item.id)
+        XCTAssertTrue(try XCTUnwrap(store.items.first).isLocked)
+        XCTAssertNotNil(store.error)
+    }
+
+    func testTransferRemovesOnlyUnlockedItemsInTheCurrentStoreState() async throws {
+        let repository = MemoryShelfRepository()
+        let unlocked = ShelfItem(contentID: UUID(), title: "Remove", kind: .file)
+        let locked = ShelfItem(contentID: UUID(), title: "Keep", kind: .image)
+        repository.values = [unlocked, locked]
+        let store = ShelfStore(repository: repository, contents: MemoryContentRepository())
+        await store.load()
+        await store.setLocked(true, for: locked.id)
+
+        await store.completeTransfer([unlocked.id, locked.id])
+
+        var expectedLocked = locked
+        expectedLocked.isLocked = true
+        XCTAssertEqual(store.items, [expectedLocked])
+        XCTAssertEqual(repository.values, [expectedLocked])
+        XCTAssertEqual(store.retainedContentIDs, [locked.contentID])
+    }
+
+    func testUndoRestoresLockAndUnlockAllowsLaterTransferRemoval() async throws {
+        let repository = MemoryShelfRepository()
+        var locked = ShelfItem(contentID: UUID(), title: "Keep", kind: .file)
+        locked.isLocked = true
+        repository.values = [locked]
+        let store = ShelfStore(repository: repository, contents: MemoryContentRepository())
+        await store.load()
+
+        await store.remove([locked.id])
+        await store.undoRemoval()
+        XCTAssertTrue(try XCTUnwrap(store.items.first).isLocked)
+
+        await store.setLocked(false, for: locked.id)
+        await store.completeTransfer([locked.id])
+        XCTAssertTrue(store.items.isEmpty)
+    }
+
     func testFailedLoadPreventsShelfMutationFromOverwritingStoredItems() async throws {
         let repository = MemoryShelfRepository()
         let existing = ShelfItem(contentID: UUID(), title: "Existing", kind: .file)

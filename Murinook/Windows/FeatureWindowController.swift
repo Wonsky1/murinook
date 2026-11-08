@@ -6,11 +6,13 @@ import SwiftUI
     private let visibility = WindowVisibilityAnimator()
     private let foreground: WindowForegroundCoordinator
     private let onClose: (() -> Void)?
+    private let onVisibilityChanged: (Bool) -> Void
 
-    init(title: String, size: NSSize, minimumSize: NSSize, content: AnyView, foreground: WindowForegroundCoordinator, integratedTitlebar: Bool = true, autosaveName: String? = nil, onClose: (() -> Void)? = nil) {
+    init(title: String, size: NSSize, minimumSize: NSSize, content: AnyView, foreground: WindowForegroundCoordinator, integratedTitlebar: Bool = true, autosaveName: String? = nil, onClose: (() -> Void)? = nil, onVisibilityChanged: @escaping (Bool) -> Void = { _ in }) {
         window = NSWindow(contentRect: NSRect(origin: .zero, size: size),
             styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
         self.onClose = onClose
+        self.onVisibilityChanged = onVisibilityChanged
         self.foreground = foreground
         super.init()
         window.delegate = self
@@ -29,6 +31,7 @@ import SwiftUI
     func setTitle(_ title: String) { window.title = title }
 
     func show() {
+        onVisibilityChanged(true)
         window.collectionBehavior.insert(.moveToActiveSpace)
         let frame = WindowPresentationGeometry.visibleFrame(for: window.frame,
             screens: NSScreen.screens.map(\.visibleFrame), preferred: NSScreen.main?.visibleFrame)
@@ -39,10 +42,10 @@ import SwiftUI
         foreground.request(window)
     }
 
-    func hide() { foreground.cancel(window); visibility.hide(window) }
+    func hide() { foreground.cancel(window); visibility.hide(window); onVisibilityChanged(false) }
     /// Terminal dismissal before releasing the controller must not depend on
     /// an animation completion owned by that same controller.
-    func dismissImmediately() { foreground.cancel(window); window.orderOut(nil) }
+    func dismissImmediately() { foreground.cancel(window); window.orderOut(nil); onVisibilityChanged(false) }
     func close() { hide(); onClose?() }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {

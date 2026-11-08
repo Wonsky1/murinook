@@ -326,13 +326,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Show Dock icon"
+            "value": "Keep Dock icon when windows are closed"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Показувати іконку в Dock"
+            "value": "Залишати іконку в Dock, коли вікна закрито"
           }
         }
       }
@@ -342,13 +342,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keep Murinook available in the Dock."
+            "value": "Murinook appears in the Dock while its windows are open."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Показувати Murinook у Dock."
+            "value": "Murinook відображається в Dock, поки його вікна відкриті."
           }
         }
       }
@@ -2718,6 +2718,246 @@
           "stringUnit": {
             "state": "translated",
             "value": "Нових стабільних або бета-оновлень не знайдено."
+          }
+        }
+      }
+    },
+    "settings.section.clipboard": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clipboard"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Буфер обміну"
+          }
+        }
+      }
+    },
+    "settings.section.fileShelf": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File Shelf"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Полиця файлів"
+          }
+        }
+      }
+    },
+    "settings.lead.clipboard": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose what Murinook captures and how it handles clipboard content."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Виберіть, що Murinook зберігає та як працює з вмістом буфера обміну."
+          }
+        }
+      }
+    },
+    "settings.lead.fileShelf": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set how the temporary file shelf behaves and where it appears."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Налаштуйте поведінку тимчасової полиці файлів і її розташування."
+          }
+        }
+      }
+    },
+    "settings.group.features": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Features"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Функції"
+          }
+        }
+      }
+    },
+    "settings.group.application": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Application"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Програма"
+          }
+        }
+      }
+    },
+    "settings.clipboard.shortcuts": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clipboard shortcuts"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сполучення клавіш буфера обміну"
+          }
+        }
+      }
+    },
+    "settings.clipboard.shortcutsDetail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open clipboard surfaces and paste the next item from anywhere."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відкривайте екрани буфера обміну та вставляйте наступний елемент звідусіль."
+          }
+        }
+      }
+    },
+    "settings.shelfPositionFreeDetail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drag the shelf header to place it where you want. Lock its position to prevent accidental moves."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перетягніть заголовок полиці, щоб розмістити її де зручно. Заблокуйте положення, щоб не перемістити її випадково."
+          }
+        }
+      }
+    },
+    "settings.shelfPositionLock": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock position"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заблокувати положення"
+          }
+        }
+      }
+    },
+    "settings.shelfPositionLockDetail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prevent the shelf from moving when its header is dragged."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не дозволяти переміщувати полицю перетягуванням її заголовка."
+          }
+        }
+      }
+    },
+    "settings.resetShelfPosition": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset position"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Скинути положення"
+          }
+        }
+      }
+    },
+    "settings.resetShelfPositionHelp": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move the shelf to its default position."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити полицю до типового положення."
+          }
+        }
+      }
+    },
+    "settings.shelf.shortcuts": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf shortcut"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сполучення клавіш полиці"
+          }
+        }
+      }
+    },
+    "settings.shelf.shortcutsDetail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open the file shelf from anywhere."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відкривайте полицю файлів звідусіль."
           }
         }
       }

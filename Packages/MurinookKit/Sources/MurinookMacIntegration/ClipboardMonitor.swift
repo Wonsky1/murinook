@@ -84,16 +84,21 @@ public final class ClipboardMonitor {
     private let writeRegistry: ClipboardWriteRegistry
     private let bookmarkAdapter: BookmarkAdapter?
     private var policy: ClipboardCapturePolicy
-    private var timer: Timer?
+    private let polling: any ClipboardPolling
     private var continuation: AsyncStream<ClipboardSnapshot>.Continuation?
     private var lastSeenChangeCount: Int
     private var activeSessionID: UUID?
 
-    public init(pasteboard: NSPasteboard = .general, policy: ClipboardCapturePolicy, writeRegistry: ClipboardWriteRegistry, bookmarkAdapter: BookmarkAdapter? = nil) {
+    public convenience init(pasteboard: NSPasteboard = .general, policy: ClipboardCapturePolicy, writeRegistry: ClipboardWriteRegistry, bookmarkAdapter: BookmarkAdapter? = nil) {
+        self.init(pasteboard: pasteboard, policy: policy, writeRegistry: writeRegistry, bookmarkAdapter: bookmarkAdapter, polling: RunLoopClipboardPolling())
+    }
+
+    init(pasteboard: NSPasteboard, policy: ClipboardCapturePolicy, writeRegistry: ClipboardWriteRegistry, bookmarkAdapter: BookmarkAdapter? = nil, polling: any ClipboardPolling) {
         self.pasteboard = pasteboard
         self.policy = policy
         self.writeRegistry = writeRegistry
         self.bookmarkAdapter = bookmarkAdapter
+        self.polling = polling
         self.lastSeenChangeCount = pasteboard.changeCount
     }
 
@@ -109,11 +114,9 @@ public final class ClipboardMonitor {
         // Clipboard generations are history events; a slow consumer must not silently lose them.
         let (stream, continuation) = AsyncStream<ClipboardSnapshot>.makeStream(bufferingPolicy: .unbounded)
         self.continuation = continuation
-        let timer = Timer(timeInterval: max(0.05, pollInterval), repeats: true) { [weak self] _ in
-            Task { @MainActor in self?.poll(sessionID: sessionID) }
+        polling.start(interval: pollInterval) { [weak self] in
+            self?.poll(sessionID: sessionID)
         }
-        RunLoop.main.add(timer, forMode: .common)
-        self.timer = timer
         continuation.onTermination = { [weak self] _ in
             Task { @MainActor in
                 guard let self, self.activeSessionID == sessionID else { return }
@@ -125,8 +128,7 @@ public final class ClipboardMonitor {
 
     public func stop() {
         activeSessionID = nil
-        timer?.invalidate()
-        timer = nil
+        polling.stop()
         let endingContinuation = continuation
         continuation = nil
         endingContinuation?.finish()

@@ -35,31 +35,48 @@ final class ClipboardMonitorTests: XCTestCase {
         XCTAssertNil(snapshot, "Enabling capture must establish a fresh pasteboard baseline")
     }
 
-    func testSlowConsumerReceivesEveryObservedGeneration() async throws {
+    func testSlowConsumerReceivesEveryPolledGeneration() async {
         let pasteboard = NSPasteboard(name: NSPasteboard.Name("MurinookMonitorTests-\(UUID().uuidString)"))
         defer { pasteboard.releaseGlobally() }
-        let monitor = ClipboardMonitor(pasteboard: pasteboard, policy: ClipboardCapturePolicy(), writeRegistry: ClipboardWriteRegistry())
+        let polling = ManualClipboardPolling()
+        let monitor = ClipboardMonitor(pasteboard: pasteboard, policy: ClipboardCapturePolicy(), writeRegistry: ClipboardWriteRegistry(), polling: polling)
         defer { monitor.stop() }
         let stream = monitor.start(pollInterval: 0.02)
 
         for value in ["first", "second", "third"] {
             pasteboard.clearContents()
             pasteboard.setString(value, forType: .string)
-            try await Task.sleep(for: .milliseconds(100))
+            polling.fire()
         }
 
-        var iterator = stream.makeAsyncIterator()
         var captured: [String] = []
         for _ in 0..<3 {
-            guard let generation = await iterator.next(),
-                  let data = generation.items.first?.representations.first?.data,
-                  let value = String(data: data, encoding: .utf8) else {
-                XCTFail("Expected each observed clipboard generation to remain buffered")
+            guard let generation = await nextSnapshot(in: stream, timeout: .seconds(1)),
+                  let value = text(in: generation) else {
+                XCTFail("Expected each manually observed clipboard generation to remain buffered")
                 return
             }
             captured.append(value)
         }
         XCTAssertEqual(captured, ["first", "second", "third"])
+    }
+
+    func testWritesBetweenPollsCoalesceToLatestPasteboardGeneration() async {
+        let pasteboard = NSPasteboard(name: NSPasteboard.Name("MurinookMonitorCoalescingTests-\(UUID().uuidString)"))
+        defer { pasteboard.releaseGlobally() }
+        let polling = ManualClipboardPolling()
+        let monitor = ClipboardMonitor(pasteboard: pasteboard, policy: ClipboardCapturePolicy(), writeRegistry: ClipboardWriteRegistry(), polling: polling)
+        defer { monitor.stop() }
+        let stream = monitor.start(pollInterval: 0.02)
+
+        for value in ["first", "second", "third"] {
+            pasteboard.clearContents()
+            pasteboard.setString(value, forType: .string)
+        }
+        polling.fire()
+
+        let snapshot = await nextSnapshot(in: stream, timeout: .milliseconds(250))
+        XCTAssertEqual(text(in: snapshot), "third")
     }
 
     private func nextSnapshot(in stream: AsyncStream<ClipboardSnapshot>, timeout: Duration = .seconds(1)) async -> ClipboardSnapshot? {
@@ -81,5 +98,22 @@ final class ClipboardMonitorTests: XCTestCase {
     private func text(in snapshot: ClipboardSnapshot?) -> String? {
         guard let data = snapshot?.items.first?.representations.first?.data else { return nil }
         return String(data: data, encoding: .utf8)
+    }
+}
+
+@MainActor
+private final class ManualClipboardPolling: ClipboardPolling {
+    private var tick: (@MainActor @Sendable () -> Void)?
+
+    func start(interval: TimeInterval, tick: @escaping @MainActor @Sendable () -> Void) {
+        self.tick = tick
+    }
+
+    func stop() {
+        tick = nil
+    }
+
+    func fire() {
+        tick?()
     }
 }

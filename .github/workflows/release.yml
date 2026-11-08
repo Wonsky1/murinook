@@ -18,7 +18,7 @@ jobs:
   release:
     if: github.event_name == 'workflow_dispatch' || github.ref_type == 'tag' || contains(github.event.head_commit.message, '[release]')
     runs-on: macos-26
-    timeout-minutes: 30
+    timeout-minutes: 40
     permissions:
       contents: write
     env:
@@ -48,9 +48,49 @@ jobs:
       - name: Check Xcode toolchain
         run: xcodebuild -version
 
+      - name: Build Swift tests
+        timeout-minutes: 20
+        shell: bash
+        run: |
+          set +e
+          xcrun swift build --package-path Packages/MurinookKit --build-tests > "$RUNNER_TEMP/murinook-swift-build.log" 2>&1
+          result=$?
+          tail -n 80 "$RUNNER_TEMP/murinook-swift-build.log"
+          exit "$result"
+
       - name: Run Swift tests
         timeout-minutes: 10
-        run: xcrun swift test --package-path Packages/MurinookKit
+        shell: bash
+        run: |
+          set +e
+          xcrun swift test --package-path Packages/MurinookKit --skip-build > "$RUNNER_TEMP/murinook-swift-test.log" 2>&1
+          result=$?
+          tail -n 80 "$RUNNER_TEMP/murinook-swift-test.log"
+          exit "$result"
+
+      - name: Collect bounded Swift logs
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          logs_dir="$RUNNER_TEMP/murinook-ci-logs"
+          mkdir -p "$logs_dir"
+          for name in swift-build swift-test; do
+            source="$RUNNER_TEMP/murinook-$name.log"
+            if [[ -f "$source" ]]; then
+              tail -c 1048576 "$source" > "$logs_dir/$name.log"
+            fi
+          done
+
+      - name: Upload bounded Swift logs
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-swift-test-logs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/murinook-ci-logs/*.log
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Package universal disk image
         run: ./scripts/package-dmg.sh

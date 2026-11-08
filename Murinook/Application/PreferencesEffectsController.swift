@@ -17,8 +17,9 @@ final class PreferencesEffectsController {
         set { shortcuts.onShortcut = newValue }
     }
     var onLanguageChange: ((Locale) -> Void)?
-    var onPlacement: ((ShelfSide, Double) -> Void)?
+    var onPlacement: ((ShelfPosition, Bool) -> Void)?
     var onFeaturesChanged: (() -> Void)?
+    var onDockPreferenceChanged: ((Bool) -> Void)?
 
     init(services: ApplicationServices, errors: ErrorPresenter) {
         self.services = services; self.errors = errors
@@ -40,7 +41,7 @@ final class PreferencesEffectsController {
         services.monitor.update(policy: ClipboardCapturePolicy(isEnabled: value.clipboardEnabled && value.captureEnabled,
             excludedBundleIdentifiers: Set(value.excludedBundleIDs)))
         if applied?.showsDockIcon != value.showsDockIcon {
-            NSApp.setActivationPolicy(value.showsDockIcon ? .regular : .accessory)
+            onDockPreferenceChanged?(value.showsDockIcon)
         }
         shortcuts.synchronize()
         if applied?.appearance != value.appearance {
@@ -53,7 +54,9 @@ final class PreferencesEffectsController {
         if applied == nil || applied?.languageCode != value.languageCode {
             onLanguageChange?(value.languageCode.map(Locale.init(identifier:)) ?? .current)
         }
-        onPlacement?(value.shelfSide, value.shelfOffset)
+        if applied?.shelfPosition != value.shelfPosition || applied?.shelfPositionLocked != value.shelfPositionLocked {
+            onPlacement?(value.shelfPosition, value.shelfPositionLocked)
+        }
         if applied?.clipboardEnabled != value.clipboardEnabled || applied?.shelfEnabled != value.shelfEnabled {
             onFeaturesChanged?()
         }

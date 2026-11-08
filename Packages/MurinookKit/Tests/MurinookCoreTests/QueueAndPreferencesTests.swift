@@ -48,6 +48,29 @@ final class QueueAndPreferencesTests: XCTestCase {
         XCTAssertEqual(decoded.retentionDays, 30)
     }
 
+    func testShelfPositionMigratesFromLegacyEdgeAndOffsetAndDefaultsUnlocked() throws {
+        let data = Data("{\"shelfSide\":\"left\",\"shelfOffset\":0.23}".utf8)
+        let decoded = try JSONDecoder().decode(AppPreferences.self, from: data)
+
+        XCTAssertEqual(decoded.shelfPosition, ShelfPosition(x: 0, y: 0.23))
+        XCTAssertFalse(decoded.shelfPositionLocked)
+        XCTAssertEqual(decoded.shelfSide, .left)
+        XCTAssertEqual(decoded.shelfOffset, 0.23)
+    }
+
+    func testShelfPositionAndLockRoundTripAndMalformedCoordinatesClamp() throws {
+        let preferences = AppPreferences(shelfPosition: ShelfPosition(x: 0.35, y: 0.8), shelfPositionLocked: true)
+        let decoded = try JSONDecoder().decode(AppPreferences.self, from: JSONEncoder().encode(preferences))
+        XCTAssertEqual(decoded.shelfPosition, ShelfPosition(x: 0.35, y: 0.8))
+        XCTAssertTrue(decoded.shelfPositionLocked)
+
+        let malformed = Data("{\"shelfPosition\":{\"x\":4,\"y\":-2}}".utf8)
+        let clamped = try JSONDecoder().decode(AppPreferences.self, from: malformed)
+        XCTAssertEqual(clamped.shelfPosition, ShelfPosition(x: 1, y: 0))
+
+        XCTAssertEqual(ShelfPosition(x: .nan, y: .infinity), ShelfPosition(x: 0.5, y: 0.5))
+    }
+
     func testPreferencesMigrationPreservesExplicitDockIconChoice() throws {
         let data = Data("{\"showsDockIcon\":true}".utf8)
 

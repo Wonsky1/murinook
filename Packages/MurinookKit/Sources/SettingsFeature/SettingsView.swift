@@ -59,18 +59,26 @@ public struct SettingsView: View {
     private var sidebar: some View {
         VStack(alignment: .leading, spacing: 4) {
             MurinookWindowControls().padding(.leading, 6).padding(.bottom, 20)
-            ForEach(SettingsSection.allCases) { section in
-                Button { navigation.selection = section } label: {
-                    HStack(spacing: 9) {
-                        Image(systemName: section.symbol).frame(width: 16)
-                        Text(LocalizedStringKey("settings.section." + section.rawValue), bundle: .module)
+            ForEach(SettingsSectionGroup.allCases) { group in
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(LocalizedStringKey("settings.group." + group.rawValue), bundle: .module)
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(MurinookPalette.soft)
+                        .padding(.leading, 10).padding(.top, group == .application ? 12 : 0)
+                    ForEach(group.sections) { section in
+                        Button { navigation.selection = section } label: {
+                            HStack(spacing: 9) {
+                                Image(systemName: section.symbol).frame(width: 16)
+                                Text(LocalizedStringKey("settings.section." + section.rawValue), bundle: .module)
+                            }
+                            .font(.system(size: 12, weight: navigation.selection == section ? .semibold : .regular))
+                            .foregroundStyle(navigation.selection == section ? MurinookPalette.accent : MurinookPalette.text.opacity(0.82))
+                            .frame(maxWidth: .infinity, minHeight: 35, alignment: .leading).padding(.horizontal, 10)
+                            .background(navigation.selection == section ? MurinookPalette.accentSoft : .clear, in: RoundedRectangle(cornerRadius: 9))
+                            .contentShape(Rectangle())
+                        }.buttonStyle(.plain).accessibilityAddTraits(navigation.selection == section ? .isSelected : [])
                     }
-                        .font(.system(size: 12, weight: navigation.selection == section ? .semibold : .regular))
-                        .foregroundStyle(navigation.selection == section ? MurinookPalette.accent : MurinookPalette.text.opacity(0.82))
-                        .frame(maxWidth: .infinity, minHeight: 35, alignment: .leading).padding(.horizontal, 10)
-                        .background(navigation.selection == section ? MurinookPalette.accentSoft : .clear, in: RoundedRectangle(cornerRadius: 9))
-                        .contentShape(Rectangle())
-                }.buttonStyle(.plain).accessibilityAddTraits(navigation.selection == section ? .isSelected : [])
+                }
             }
             Spacer(minLength: 12)
             VStack(alignment: .leading, spacing: 3) {
@@ -87,13 +95,14 @@ public struct SettingsView: View {
     @ViewBuilder private var sectionContent: some View {
         Group {
             switch navigation.selection {
-            case .general: GeneralSettingsSection(store: store, actions: actions, languageName: languageName)
-            case .history: HistorySettingsSection(store: store, clear: { confirmsHistoryClear = true }, count: actions.unpinnedHistoryCount)
-            case .privacy: PrivacySettingsSection(store: store, actions: actions)
-            case .shortcuts: ShortcutsSettingsSection(store: store, actions: actions)
-            case .shelf: ShelfSettingsSection(store: store)
+            case .clipboard: ClipboardSettingsSection(store: store, actions: actions,
+                clearHistory: { confirmsHistoryClear = true }, unpinnedHistoryCount: actions.unpinnedHistoryCount)
+            case .fileShelf: ShelfSettingsSection(store: store, actions: actions)
             case .windowManagement: WindowManagementSettingsSection(store: store, actions: actions)
+            case .general: GeneralSettingsSection(store: store, actions: actions, languageName: languageName)
             case .updates: UpdateSettingsSection(preferences: store, updates: updates, currentVersion: currentVersion, actions: actions)
+            case .history, .privacy, .shortcuts, .shelf:
+                EmptyView()
             }
         }
         .id(navigation.selection)

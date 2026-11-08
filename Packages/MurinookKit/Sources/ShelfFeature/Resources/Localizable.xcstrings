@@ -507,44 +507,182 @@
     },
     "shelf.localOnly": {
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Only on this Mac" } },
-        "uk": { "stringUnit": { "state": "translated", "value": "Лише на цьому Mac" } }
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only on this Mac"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Лише на цьому Mac"
+          }
+        }
       }
     },
     "shelf.kind.file": {
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "File" } },
-        "uk": { "stringUnit": { "state": "translated", "value": "Файл" } }
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Файл"
+          }
+        }
       }
     },
     "shelf.kind.image": {
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Image" } },
-        "uk": { "stringUnit": { "state": "translated", "value": "Зображення" } }
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Image"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зображення"
+          }
+        }
       }
     },
     "shelf.kind.link": {
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Link" } },
-        "uk": { "stringUnit": { "state": "translated", "value": "Посилання" } }
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Link"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Посилання"
+          }
+        }
       }
     },
     "shelf.kind.text": {
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Text" } },
-        "uk": { "stringUnit": { "state": "translated", "value": "Текст" } }
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Текст"
+          }
+        }
       }
     },
     "shelf.kind.code": {
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Code" } },
-        "uk": { "stringUnit": { "state": "translated", "value": "Код" } }
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Код"
+          }
+        }
       }
     },
     "shelf.kind.color": {
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Color" } },
-        "uk": { "stringUnit": { "state": "translated", "value": "Колір" } }
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Color"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Колір"
+          }
+        }
+      }
+    },
+    "shelf.position.lock": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock shelf position"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заблокувати розташування полиці"
+          }
+        }
+      }
+    },
+    "shelf.position.unlock": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock shelf position"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Розблокувати розташування полиці"
+          }
+        }
+      }
+    },
+    "shelf.item.lock": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep item after dragging"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Залишати елемент після перетягування"
+          }
+        }
+      }
+    },
+    "shelf.item.unlock": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow removal after dragging"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дозволити вилучення після перетягування"
+          }
+        }
       }
     }
   },

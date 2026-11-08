@@ -21,10 +21,16 @@ import MurinookDomain
     private let router: ContentActionRouter
     private let errors: ErrorPresenter
     private let defaults: UserDefaults
+    private let dockPresence: DockPresenceController
 
     init(directory: URL, defaults: UserDefaults = .standard) throws {
         self.defaults = defaults
         services = try ApplicationServices(directory: directory)
+        let diagnostics = services.diagnostics
+        let dockPresence = DockPresenceController(onPolicyChange: { visible, applied in
+            diagnostics.event("dock.policy.changed", fields: ["visible": String(visible), "applied": String(applied)])
+        })
+        self.dockPresence = dockPresence
         let versionLabel = Bundle.main.object(forInfoDictionaryKey: "MurinookReleaseVersion") as? String
             ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0"
         guard let currentVersion = ReleaseVersion(versionLabel) else { throw CocoaError(.coderInvalidValue) }
@@ -40,12 +46,13 @@ import MurinookDomain
         let transfers = ShelfTransferController(services: services, errors: errors)
         transfers.requestCleanup = maintenance.request
         windows = ApplicationWindows(services: services, router: router, effects: effects, transfers: transfers,
-            updates: updates, defaults: defaults)
+            updates: updates, defaults: defaults, dockPresence: dockPresence)
         capture = ClipboardCaptureController(services: services)
         visualBackfill = ContentVisualBackfill(services: services)
         effects.onFeaturesChanged = { [weak self] in self?.synchronizeFeatures() }
+        effects.onDockPreferenceChanged = { [weak dockPresence] in dockPresence?.setAlwaysShow($0) }
         router.beforePaste = { [weak self] in self?.windows.quick.hide() }
-        effects.onPlacement = { [weak self] in self?.windows.shelf.updatePlacement(side: $0, offset: $1) }
+        effects.onPlacement = { [weak self] in self?.windows.shelf.updatePlacement(position: $0, locked: $1) }
         effects.onLanguageChange = { [weak self] in self?.windows.updateLanguage($0) }
         effects.onShortcut = { [weak self] in self?.perform($0) }
         services.dragMonitor.onCandidate = { [weak self] _ in

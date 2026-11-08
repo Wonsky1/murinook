@@ -76,6 +76,16 @@ import MurinookDomain
         }
     }
 
+    public func setLocked(_ locked: Bool, for id: UUID) async {
+        await mutations.run { [weak self] in
+            guard let self, requireLoaded(), let index = items.firstIndex(where: { $0.id == id }),
+                  items[index].isLocked != locked else { return }
+            var proposed = items
+            proposed[index].isLocked = locked
+            _ = await commit(proposed, key: "shelf.lock")
+        }
+    }
+
     public func remove(_ ids: Set<UUID>) async {
         await mutations.run { [weak self] in
             guard let self, requireLoaded() else { return }
@@ -100,11 +110,14 @@ import MurinookDomain
     public func completeTransfer(_ itemIDs: Set<UUID>) async {
         await mutations.run { [weak self] in
             guard let self, requireLoaded(), !itemIDs.isEmpty else { return }
-            let proposed = items.filter { !itemIDs.contains($0.id) }
+            let lockedIDs = Set((items + removedBatch).filter { itemIDs.contains($0.id) && $0.isLocked }.map(\.id))
+            let completedIDs = itemIDs.subtracting(lockedIDs)
+            guard !completedIDs.isEmpty else { return }
+            let proposed = items.filter { !completedIDs.contains($0.id) }
             if proposed.count != items.count, !(await commit(proposed, key: "shelf.transfer")) {
                 return
             }
-            removedBatch.removeAll { itemIDs.contains($0.id) }
+            removedBatch.removeAll { completedIDs.contains($0.id) }
         }
     }
 

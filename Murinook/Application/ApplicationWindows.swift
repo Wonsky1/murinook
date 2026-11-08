@@ -14,7 +14,7 @@ import SettingsFeature
 import OnboardingFeature
 
 final class ApplicationWindows {
-    let quick = QuickAccessWindowController()
+    let quick: QuickAccessWindowController
     let shelf = ShelfWindowController()
     let menuBarAnchor = MenuBarAnchor()
     private let services: ApplicationServices
@@ -24,6 +24,7 @@ final class ApplicationWindows {
     private let updates: AppUpdateController
     private let defaults: UserDefaults
     private let foreground: WindowForegroundCoordinator
+    private let dockPresence: DockPresenceController
     private var presentation: ApplicationPresentationState
     private var library: FeatureWindowController?
     private var settings: FeatureWindowController?
@@ -34,10 +35,14 @@ final class ApplicationWindows {
 
     init(services: ApplicationServices, router: ContentActionRouter,
          effects: PreferencesEffectsController, transfers: ShelfTransferController, updates: AppUpdateController,
-         defaults: UserDefaults) {
+         defaults: UserDefaults, dockPresence: DockPresenceController) {
         self.services = services; self.router = router; self.effects = effects; self.transfers = transfers
         self.updates = updates
         self.defaults = defaults
+        self.dockPresence = dockPresence
+        quick = QuickAccessWindowController(onVisibilityChanged: { [weak dockPresence] visible in
+            dockPresence?.setOpen(visible, for: .quickAccess)
+        })
         foreground = WindowForegroundCoordinator { phase, window in
             services.diagnostics.event("window.presentation.\(phase)", fields: [
                 "window": window.title, "active": String(NSApp.isActive),
@@ -53,7 +58,7 @@ final class ApplicationWindows {
 
     func start() {
         let value = self.services.preferences.value
-        self.shelf.configure(side: value.shelfSide, offset: value.shelfOffset, itemCount: self.services.shelf.items.count, preferences: self.services.preferences,
+        self.shelf.configure(position: value.shelfPosition, positionLocked: value.shelfPositionLocked, itemCount: self.services.shelf.items.count, preferences: self.services.preferences,
             diagnostics: self.services.diagnostics,
             acceptDrop: self.transfers.acceptNative, isDropEnabled: self.transfers.canAcceptDrop) { [unowned self] in
             AnyView(FeatureEnvironment(preferences: self.services.preferences) {
@@ -63,17 +68,19 @@ final class ApplicationWindows {
                         preview: { [weak self] in self?.router.preview($0.contentID) },
                         hide: self.shelf.hide, close: self.shelf.hide,
                         dragCompleted: { [weak self] item, success in self?.transfers.dragCompleted(item, succeeded: success) }),
-                        placement: ShelfPlacement(side: self.services.preferences.value.shelfSide,
-                            offset: self.services.preferences.value.shelfOffset), onPlacementChange: { [weak self] placement in
-                                self?.services.preferences.update { $0.shelfSide = placement.side; $0.shelfOffset = placement.offset }
-                            }, headerDragArea: AnyView(EdgeMoveHandle(
-                                move: { [weak self] in self?.shelf.moveAnchor(to: $0) },
-                                finish: { [weak self] in self?.shelf.finishMoving() }).frame(height: 29)), isDragging: self.shelf.isDragging)
+                        positionLocked: self.services.preferences.value.shelfPositionLocked,
+                        onPositionLockChange: { [weak self] locked in
+                            self?.services.preferences.update { $0.shelfPositionLocked = locked }
+                        }, headerDragArea: AnyView(ShelfMoveHandle(
+                            isLocked: self.services.preferences.value.shelfPositionLocked,
+                            begin: { [weak self] in self?.shelf.beginMoving(at: $0) },
+                            move: { [weak self] in self?.shelf.move(to: $0) },
+                            finish: { [weak self] in self?.shelf.finishMoving() }).frame(height: 29)), isDragging: self.shelf.isDragging)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
             })
         }
-        self.shelf.placementChanged = { [weak self] side, offset in
-            self?.services.preferences.update { $0.shelfSide = side; $0.shelfOffset = offset }
+        self.shelf.placementChanged = { [weak self] position in
+            self?.services.preferences.update { $0.shelfPosition = position }
         }
         self.transfers.dropped = { [weak self] count in self?.shelf.dropped(itemCount: count) }
         observeShelf()
@@ -121,7 +128,8 @@ final class ApplicationWindows {
                         showUpdates: self.showUpdateSettings,
                         close: { [weak self] in self?.library?.close() }), preferences: self.services.preferences,
                         updates: self.updates.store)
-                }), foreground: foreground, autosaveName: "Murinook.Library", onClose: { [weak self] in self?.libraryClosed() })
+                }), foreground: foreground, autosaveName: "Murinook.Library", onClose: { [weak self] in self?.libraryClosed() },
+                onVisibilityChanged: { [weak self] in self?.dockPresence.setOpen($0, for: .library) })
         }
         library?.show()
     }
@@ -137,7 +145,8 @@ final class ApplicationWindows {
                         close: { [weak self] in self?.queue?.hide() },
                         pasteNextPlainText: { [weak self] in self?.router.paste($0.contentID, plain: true, queueID: $0.id) }),
                         pasteNextShortcut: self.services.preferences.value.shortcuts[.pasteNext].map(ShortcutDescriptionFormatter.string(for:)) ?? "—")
-                }), foreground: foreground, autosaveName: "Murinook.Queue")
+                }), foreground: foreground, autosaveName: "Murinook.Queue",
+                onVisibilityChanged: { [weak self] in self?.dockPresence.setOpen($0, for: .queue) })
         }
         queue?.show()
     }
@@ -145,7 +154,8 @@ final class ApplicationWindows {
     func showSettings() {
         if settings == nil {
             settings = FeatureWindowController(title: localized("Settings"), size: NSSize(width: 920, height: 630),
-                minimumSize: NSSize(width: 780, height: 560), content: settingsView, foreground: foreground, autosaveName: "Murinook.Settings")
+                minimumSize: NSSize(width: 780, height: 560), content: settingsView, foreground: foreground, autosaveName: "Murinook.Settings",
+                onVisibilityChanged: { [weak self] in self?.dockPresence.setOpen($0, for: .settings) })
         }
         settings?.show()
     }
@@ -201,7 +211,8 @@ final class ApplicationWindows {
                     finish: { [weak self] in self?.finishOnboarding() },
                     hasWindowAccessibilityAccess: self.checkWindowAccess,
                     requestWindowAccessibilityAccess: self.services.windowManager.requestAccessibilityAccess))
-            }), foreground: foreground, onClose: { [weak self] in self?.finishOnboarding() })
+            }), foreground: foreground, onClose: { [weak self] in self?.finishOnboarding() },
+            onVisibilityChanged: { [weak self] in self?.dockPresence.setOpen($0, for: .onboarding) })
         onboarding?.show()
     }
 

@@ -5,10 +5,15 @@ final class QuickAccessWindowController {
     private let panel = FloatingPanel(size: NSSize(width: 900, height: 620))
     private let visibility = WindowVisibilityAnimator()
     private let dismissal = QuickAccessDismissalMonitor()
+    private let onVisibilityChanged: (Bool) -> Void
 
-    init() { panel.closeAction = { [weak self] in self?.hide() } }
+    init(onVisibilityChanged: @escaping (Bool) -> Void = { _ in }) {
+        self.onVisibilityChanged = onVisibilityChanged
+        panel.closeAction = { [weak self] in self?.hide() }
+    }
 
     func show(content: AnyView, title: String) {
+        onVisibilityChanged(true)
         panel.title = title
         panel.contentView = NSHostingView(rootView: content)
         if let screen = NSScreen.screens.first(where: { $0.frame.contains(NSEvent.mouseLocation) }) ?? NSScreen.main {
@@ -27,5 +32,6 @@ final class QuickAccessWindowController {
     func hide() {
         visibility.hide(panel)
         dismissal.stop()
+        onVisibilityChanged(false)
     }
 }

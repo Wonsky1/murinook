@@ -67,8 +67,16 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var excludedBundleIDs: [String]
     public var showsDockIcon: Bool
     public var launchAtLogin: Bool
-    public var shelfSide: ShelfSide
-    public var shelfOffset: Double
+    public var shelfPosition: ShelfPosition
+    public var shelfPositionLocked: Bool
+    public var shelfSide: ShelfSide {
+        get { shelfPosition.x < 0.5 ? .left : .right }
+        set { shelfPosition = ShelfPosition(x: newValue == .left ? 0 : 1, y: shelfPosition.y) }
+    }
+    public var shelfOffset: Double {
+        get { shelfPosition.y }
+        set { shelfPosition = ShelfPosition(x: shelfPosition.x, y: newValue) }
+    }
     public var autoRemoveShelfItems: Bool
     public var autoShowShelf: Bool
     public var languageCode: String?
@@ -101,11 +109,14 @@ public struct AppPreferences: Codable, Equatable, Sendable {
                 showsDockIcon: Bool = false, launchAtLogin: Bool = false, shelfSide: ShelfSide = .right,
                 shelfOffset: Double = 0.5, autoRemoveShelfItems: Bool = true, autoShowShelf: Bool = true, languageCode: String? = nil,
                 appearance: AppAppearance = .system, historyLayout: HistoryLayout = .list, shortcuts: [ShortcutAction: KeyCombination] = KeyCombination.defaults,
-                automaticallyChecksForUpdates: Bool = true, windowManagementEnabled: Bool = true, includeBetaUpdates: Bool = false) {
+                automaticallyChecksForUpdates: Bool = true, windowManagementEnabled: Bool = true, includeBetaUpdates: Bool = false,
+                shelfPosition: ShelfPosition? = nil, shelfPositionLocked: Bool = false) {
         self.captureEnabled = captureEnabled; self.clipboardEnabled = clipboardEnabled; self.shelfEnabled = shelfEnabled
         self.retentionDays = max(0, retentionDays); self.maxHistoryItems = maxHistoryItems == 0 ? 0 : max(1, maxHistoryItems)
         self.excludedBundleIDs = excludedBundleIDs; self.showsDockIcon = showsDockIcon; self.launchAtLogin = launchAtLogin
-        self.shelfSide = shelfSide; self.shelfOffset = min(1, max(0, shelfOffset)); self.autoRemoveShelfItems = autoRemoveShelfItems
+        self.shelfPosition = shelfPosition ?? ShelfPosition(x: shelfSide == .left ? 0 : 1, y: shelfOffset)
+        self.shelfPositionLocked = shelfPositionLocked
+        self.autoRemoveShelfItems = autoRemoveShelfItems
         self.autoShowShelf = autoShowShelf
         self.languageCode = languageCode; self.appearance = appearance; self.historyLayout = historyLayout; self.shortcuts = shortcuts
         self.automaticallyChecksForUpdates = automaticallyChecksForUpdates
@@ -113,7 +124,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         self.windowManagementEnabled = windowManagementEnabled
         self.shortcutDefaultsVersion = Self.currentShortcutDefaultsVersion
     }
-    private enum CodingKeys: String, CodingKey { case captureEnabled, clipboardEnabled, shelfEnabled, retentionDays, maxHistoryItems, excludedBundleIDs, showsDockIcon, launchAtLogin, shelfSide, shelfOffset, autoRemoveShelfItems, autoShowShelf, languageCode, appearance, historyLayout, shortcuts, automaticallyChecksForUpdates, windowManagementEnabled, shortcutDefaultsVersion, includeBetaUpdates }
+    private enum CodingKeys: String, CodingKey { case captureEnabled, clipboardEnabled, shelfEnabled, retentionDays, maxHistoryItems, excludedBundleIDs, showsDockIcon, launchAtLogin, shelfSide, shelfOffset, shelfPosition, shelfPositionLocked, autoRemoveShelfItems, autoShowShelf, languageCode, appearance, historyLayout, shortcuts, automaticallyChecksForUpdates, windowManagementEnabled, shortcutDefaultsVersion, includeBetaUpdates }
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         let storedDefaultsVersion = try c.decodeIfPresent(Int.self, forKey: .shortcutDefaultsVersion) ?? 0
@@ -121,6 +132,10 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         if storedDefaultsVersion < Self.currentShortcutDefaultsVersion {
             shortcuts = Self.migratingWindowShortcutDefaults(into: shortcuts)
         }
+        let legacySide = try c.decodeIfPresent(ShelfSide.self, forKey: .shelfSide) ?? .right
+        let legacyOffset = try c.decodeIfPresent(Double.self, forKey: .shelfOffset) ?? 0.5
+        let position = try c.decodeIfPresent(ShelfPosition.self, forKey: .shelfPosition)
+            ?? ShelfPosition(x: legacySide == .left ? 0 : 1, y: legacyOffset)
         self.init(captureEnabled: try c.decodeIfPresent(Bool.self, forKey: .captureEnabled) ?? true,
                   clipboardEnabled: try c.decodeIfPresent(Bool.self, forKey: .clipboardEnabled) ?? true,
                   shelfEnabled: try c.decodeIfPresent(Bool.self, forKey: .shelfEnabled) ?? true,
@@ -129,8 +144,8 @@ public struct AppPreferences: Codable, Equatable, Sendable {
                   excludedBundleIDs: try c.decodeIfPresent([String].self, forKey: .excludedBundleIDs) ?? ["com.agilebits.onepassword7", "com.1password.1password"],
                   showsDockIcon: try c.decodeIfPresent(Bool.self, forKey: .showsDockIcon) ?? false,
                   launchAtLogin: try c.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false,
-                  shelfSide: try c.decodeIfPresent(ShelfSide.self, forKey: .shelfSide) ?? .right,
-                  shelfOffset: try c.decodeIfPresent(Double.self, forKey: .shelfOffset) ?? 0.5,
+                  shelfSide: legacySide,
+                  shelfOffset: legacyOffset,
                   autoRemoveShelfItems: try c.decodeIfPresent(Bool.self, forKey: .autoRemoveShelfItems) ?? true,
                   autoShowShelf: try c.decodeIfPresent(Bool.self, forKey: .autoShowShelf) ?? true,
                   languageCode: try c.decodeIfPresent(String.self, forKey: .languageCode),
@@ -139,8 +154,36 @@ public struct AppPreferences: Codable, Equatable, Sendable {
                   shortcuts: shortcuts,
                   automaticallyChecksForUpdates: try c.decodeIfPresent(Bool.self, forKey: .automaticallyChecksForUpdates) ?? true,
                   windowManagementEnabled: try c.decodeIfPresent(Bool.self, forKey: .windowManagementEnabled) ?? true,
-                  includeBetaUpdates: try c.decodeIfPresent(Bool.self, forKey: .includeBetaUpdates) ?? false)
+                  includeBetaUpdates: try c.decodeIfPresent(Bool.self, forKey: .includeBetaUpdates) ?? false,
+                  shelfPosition: position,
+                  shelfPositionLocked: try c.decodeIfPresent(Bool.self, forKey: .shelfPositionLocked) ?? false)
         shortcutDefaultsVersion = max(storedDefaultsVersion, Self.currentShortcutDefaultsVersion)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(captureEnabled, forKey: .captureEnabled)
+        try container.encode(clipboardEnabled, forKey: .clipboardEnabled)
+        try container.encode(shelfEnabled, forKey: .shelfEnabled)
+        try container.encode(retentionDays, forKey: .retentionDays)
+        try container.encode(maxHistoryItems, forKey: .maxHistoryItems)
+        try container.encode(excludedBundleIDs, forKey: .excludedBundleIDs)
+        try container.encode(showsDockIcon, forKey: .showsDockIcon)
+        try container.encode(launchAtLogin, forKey: .launchAtLogin)
+        try container.encode(shelfSide, forKey: .shelfSide)
+        try container.encode(shelfOffset, forKey: .shelfOffset)
+        try container.encode(shelfPosition, forKey: .shelfPosition)
+        try container.encode(shelfPositionLocked, forKey: .shelfPositionLocked)
+        try container.encode(autoRemoveShelfItems, forKey: .autoRemoveShelfItems)
+        try container.encode(autoShowShelf, forKey: .autoShowShelf)
+        try container.encodeIfPresent(languageCode, forKey: .languageCode)
+        try container.encode(appearance, forKey: .appearance)
+        try container.encode(historyLayout, forKey: .historyLayout)
+        try container.encode(shortcuts, forKey: .shortcuts)
+        try container.encode(automaticallyChecksForUpdates, forKey: .automaticallyChecksForUpdates)
+        try container.encode(includeBetaUpdates, forKey: .includeBetaUpdates)
+        try container.encode(windowManagementEnabled, forKey: .windowManagementEnabled)
+        try container.encode(shortcutDefaultsVersion, forKey: .shortcutDefaultsVersion)
     }
 
     private static func migratingWindowShortcutDefaults(

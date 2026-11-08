@@ -14,13 +14,7 @@ struct HistorySettingsSection: View {
     private enum UnlimitedLimit { case time, items }
 
     var body: some View {
-        VStack(spacing: 0) {
-            FeatureEnableSettingsRow(store: store, key: "settings.clipboard.enabled",
-                detail: "settings.clipboard.enabledDetail", icon: "doc.on.clipboard", keyPath: \.clipboardEnabled)
-            options
-                .disabled(!store.value.clipboardEnabled)
-                .opacity(store.value.clipboardEnabled ? 1 : 0.45)
-        }
+        options
         .onAppear { rememberFiniteLimit(store.value.maxHistoryItems) }
         .onChange(of: store.value.maxHistoryItems) { _, value in rememberFiniteLimit(value) }
         .confirmationDialog(Text(unlimitedChoice == .time ? "settings.unlimitedTime.confirmTitle" : "settings.unlimitedItems.confirmTitle", bundle: .module),

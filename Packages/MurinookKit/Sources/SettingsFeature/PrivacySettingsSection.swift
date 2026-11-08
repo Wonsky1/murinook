@@ -31,7 +31,5 @@ struct PrivacySettingsSection: View {
                     openSettings: actions.showAccessibilityHelp)
             }
         }
-        .disabled(!store.value.clipboardEnabled)
-        .opacity(store.value.clipboardEnabled ? 1 : 0.45)
     }
 }

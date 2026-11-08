@@ -8,7 +8,7 @@ struct ShelfDragHandle: NSViewRepresentable {
     let items: [ShelfItem]
     let makeDraggingItems: @MainActor ([ShelfItem]) async -> [NSDraggingItem]
     let dragStarted: @MainActor ([ShelfItem]) -> Bool
-    let dragCompleted: (ShelfItem, Bool) -> Void
+    let dragCompleted: ([ShelfItem], Bool) -> Void
     let clicked: (NSEvent) -> Void
 
     func makeNSView(context: Context) -> ShelfDragSourceView {
@@ -33,7 +33,7 @@ struct ShelfDragHandle: NSViewRepresentable {
 final class ShelfDragSourceView: NSView, NSDraggingSource {
     var makeDraggingItems: @MainActor ([ShelfItem]) async -> [NSDraggingItem] = { _ in [] }
     var dragStarted: @MainActor ([ShelfItem]) -> Bool = { _ in true }
-    var dragCompleted: (ShelfItem, Bool) -> Void = { _, _ in }
+    var dragCompleted: ([ShelfItem], Bool) -> Void = { _, _ in }
     var clicked: (NSEvent) -> Void = { _ in }
 
     private var items: [ShelfItem] = []
@@ -46,8 +46,11 @@ final class ShelfDragSourceView: NSView, NSDraggingSource {
     private let logger = Logger(subsystem: "wonsky.Murinook", category: "ShelfDrag")
 
     func prepare(_ items: [ShelfItem], force: Bool = false) {
-        guard !isDragging, force || items.map(\.contentID) != self.items.map(\.contentID) else { return }
+        guard !isDragging else { return }
+        let needsWriters = force || items.map(\.contentID) != self.items.map(\.contentID)
+        // IDs and lock state can change without changing the prepared payload.
         self.items = items
+        guard needsWriters else { return }
         nativeItems = []
         preparation?.cancel()
         let token = UUID()
@@ -92,7 +95,7 @@ final class ShelfDragSourceView: NSView, NSDraggingSource {
 
     func draggingSession(_ session: NSDraggingSession, endedAt screenPoint: NSPoint, operation: NSDragOperation) {
         logger.notice("Shelf drag session ended; accepted: \(!operation.isEmpty)")
-        activeItems.forEach { dragCompleted($0, !operation.isEmpty) }
+        dragCompleted(activeItems, !operation.isEmpty)
         activeItems = []
         mouseDownEvent = nil
         isDragging = false
